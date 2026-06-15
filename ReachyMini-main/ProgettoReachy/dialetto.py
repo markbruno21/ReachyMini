@@ -23,47 +23,67 @@ DIALETTI = {
 }
 
 def ottieni_regione(input_utente):
-    testo=input_utente.lower()
+    testo=input_utente
     
     if "piemonte" in testo or "torino" in testo: 
-        return "Piemonte"
+        return DIALETTI["Piemonte"]  
+        
     elif "valle d'aosta" in testo or "aosta" in testo: 
-        return "Valle_d_Aosta"
+        return DIALETTI["Valle_d_Aosta"]
+        
     elif "lombardia" in testo or "milano" in testo: 
-        return "Lombardia"
+        return DIALETTI["Lombardia"]
+        
     elif "veneto" in testo or "venezia" in testo or "verona" in testo: 
-        return "Veneto"
+        return DIALETTI["Veneto"]
+        
     elif "trentino" in testo or "trento" in testo: 
-        return "Trentino_Alto_Adige"
+        return DIALETTI["Trentino_Alto_Adige"]
+        
     elif "friuli" in testo or "trieste" in testo or "udine" in testo: 
-        return "Friuli_Venezia_Giulia"
+        return DIALETTI["Friuli_Venezia_Giulia"]
+        
     elif "liguria" in testo or "genova" in testo: 
-        return "Liguria"
+        return DIALETTI["Liguria"]
+        
     elif "emilia" in testo or "romagna" in testo or "bologna" in testo: 
-        return "Emilia_Romagna"
+        return DIALETTI["Emilia_Romagna"]
+        
     elif "toscana" in testo or "firenze" in testo: 
-        return "Toscana"
+        return DIALETTI["Toscana"]
+        
     elif "umbria" in testo or "perugia" in testo: 
-        return "Umbria"
+        return DIALETTI["Umbria"]
+        
     elif "marche" in testo or "ancona" in testo: 
-        return "Marche"
+        return DIALETTI["Marche"]
+        
     elif "lazio" in testo or "roma" in testo: 
-        return "Lazio"
+        return DIALETTI["Lazio"]
+        
     elif "abruzzo" in testo or "pescara" in testo: 
-        return "Abruzzo"
+        return DIALETTI["Abruzzo"]
+        
     elif "molise" in testo or "campobasso" in testo: 
-        return "Molise"
+        return DIALETTI["Molise"]
+        
     elif "campania" in testo or "napoli" in testo: 
-        return "Campania"
+        return DIALETTI["Campania"]
+        
     elif "puglia" in testo or "bari" in testo: 
-        return "Puglia"
+        return DIALETTI["Puglia"]
+        
     elif "basilicata" in testo or "potenza" in testo: 
-        return "Basilicata"
+        return DIALETTI["Basilicata"]
+        
     elif "calabria" in testo or "catanzaro" in testo: 
-        return "Calabria"
+        return DIALETTI["Calabria"]
+        
     elif "sicilia" in testo or "palermo" in testo: 
-        return "Sicilia"
+        return DIALETTI["Sicilia"]
+        
     elif "sardegna" in testo or "cagliari" in testo: 
-        return "Sardegna"
+        return DIALETTI["Sardegna"]
+        
     else:
         return "Complimenti. Che bel posto!"
