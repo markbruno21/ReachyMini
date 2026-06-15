@@ -30,18 +30,23 @@ frasi_incoraggiamento = [
 #----------------------INIZIALIZZAZIONE ----------------------
 #variabili/dizionari/liste per gestire lo stato del gioco
 giocatori_punteggi = {}
-playlist = []
 canzoni_giocate = []
 canzone_corrente = None
 gioco_terminato = False
+
+def carica_playlist(canzoni):
+    with open(canzoni, 'r', encoding='utf-8') as file: #r serve per leggere il file, encoding serve per leggere i caratteri speciali
+        playlist = json.load(file)
+    return playlist
+
+pygame.mixer.init()
+lista_canzoni = carica_playlist("canzoni.json")
 
 def inizializza_gioco():
     inizializza_robot()
     ascolto_risposta()
 
-    #musica 
-    pygame.mixer.init()
-    lista_canzoni = carica_playlist("canzoni.json")
+    
 
     #stato gioco
     stato_gioco = {
@@ -54,10 +59,7 @@ def inizializza_gioco():
 
     return stato_gioco
 
-def carica_playlist(canzoni):
-    with open(canzoni, 'r', encoding='utf-8') as file: #r serve per leggere il file, encoding serve per leggere i caratteri speciali
-        playlist = json.load(file)
-    return playlist
+
 
 #----------------------FUNZIONI PER JUKBOXE----------------------
 def presentazione_gioco(reachy: ReachyMini):
@@ -104,7 +106,7 @@ def estrai_canzone(stato_gioco):
     stato_gioco["canzoni_giocate"].append(canzone_estratta)
     return canzone_estratta
 
-#classifica_finale[0]      → ("Mario", 5)   intera tupla
+#classifica_finale[0]      → ("Mario":5)   intera tupla
 #classifica_finale[0][0]   → "Mario"         nome
 #classifica_finale[0][1]   → 5               punteggio
 def fine_gioco(stato_gioco):

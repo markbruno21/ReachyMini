@@ -4,7 +4,7 @@ import pyttsx3
 import pygame
 import speech_recognition as sr
 from dialetto import ottieni_regione, DIALETTI
-from jukebox import carica_playlist,estrai_canzone
+from jukebox import lista_canzoni
 
 
 VELOCITA_PARLATA = 1.4           # Secondi di pausa dopo ogni battuta. Rispettare i tempi di elaborazione di un utente anziano senza risultare incalzante
@@ -125,17 +125,18 @@ def presentazione(reachy: ReachyMini):
 def scelta(reachy: ReachyMini): 
     engine.say("Cosa vuole fare oggi?")
     engine.pause(PAUSA_BREVE)
-    engine.say("Vuoi ascoltare una canzone o sapere le ultime notizie? Rispondi con 'canzone' o 'notizie'")
+    engine.say("Vuoi ascoltare una canzone o sapere le ultime notizie? Rispondi con 'canzone' o 'notizie' oppure 'no'")
     risposta = ascolto_risposta()
     match scelta:
         case 1:
             risposta == "canzone"
             canzone=random.choice(lista_canzoni)
             pygame.mixer.init()
-            pygame.mixer.music.load(canzone_corrente["file_path"])
+            pygame.mixer.music.load(canzone["file_path"])
             pygame.mixer.music.play()
             engine.pause(PAUSA_BREVE)
-            engine.say("")
+            engine.say("Spero le sia piaciuta.")
+            
             #fai partire la musica in base al cantante scelto 
         case 2:
             risposta == "Notizie"
@@ -143,6 +144,7 @@ def scelta(reachy: ReachyMini):
             notizie = ascolto_risposta ()
             #fai partire le notizie in base alla scelta 
         case 3:
+            risposta == "no"
             #invocare funzione spegnimento
     return 
 
