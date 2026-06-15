@@ -2,6 +2,7 @@ import time
 import random
 import pyttsx3
 import speech_recognition as sr
+from dialetto import ottieni_regione, DIALETTI
 
 VELOCITA_PARLATA = 1.4           # Secondi di pausa dopo ogni battuta. Rispettare i tempi di elaborazione di un utente anziano senza risultare incalzante
 PAUSA_BREVE = 0.8                # Pausa breve tra azioni multimodali, per lasciare il tempo necessario per rispondere senza stress
@@ -18,7 +19,9 @@ MIC = sr.Microphone()
 
 #variabili
 fraintendimento = 0
+nomi_pazienti=[]
 
+#----------------------FUNZIONI ESSENZIALI----------------------
 
 def inizializza_robot() -> ReachyMini:
     """
@@ -43,60 +46,88 @@ def ascolto_risposta() -> str:
             return "Errore nel sistema"
     #gestire lingue straniere
 
+def non_capisco(reachy: ReachyMini, contesto: str = "risposta", fraintendimento: int = 0) -> str:
+    match fraintendimento:
+        case 1:
+            fraintendimento == 1 
+            engine.pause(PAUSA_BREVE)
+            #movimento robot 
+            engine.say("I miei circuiti sono lenti, scusami, può ripetere?")
+            return ascolto_risposta()
+        case 2:
+            fraintendimento == 2 
+            engine.say( "Scusi, oggi non riesco a sentire bene"
+            f"Potrebbe ripetere {contesto}? Voglio capire bene.")
+            return ascolto_risposta()
+        case 3:
+            fraintendimento == 3 
+            engine.say("oggi proprio non riesco a funzionare, scusami. Parliamo di altro")
+            return 
 
+#----------------------FUNZIONI PER L'INTERAZIONE----------------------
+def saluto(reachy: ReachyMini):
+    #il robot deve avvicinarsi a Carmela e fare un saluto con la mano
+    reachy.arm.right.raise_up(30)
+    reachy.arm.right.wave()
+    reachy.arm.right.lower()
+    engine.say("Ciao, sono Reachy. Come stai?")
 
 
 def presentazione(reachy: ReachyMini):
     #il robot deve presentarsi e spiegare il suo scopo
     engine.say("Faccio parte di questa RSA.")
-    pause(PAUSA_BREVE)
+    engine.pause(PAUSA_BREVE)
+
     engine.say("Il mio scopo è quello di farti compagnia e aiutare come posso")
-    pause(PAUSA_BREVE)
+    engine.pause(PAUSA_BREVE)
+
     engine.say("Vuoi sapere di più su di me? Rispondi con 'si' o 'no'")
-    pause(PAUSA_LUNGA)
+    engine.pause(PAUSA_LUNGA)
+
     risposta = ascolto_risposta()
     while fraintendimento < 3:
-    risposta = ascolto_risposta()
-    if risposta == "si":
-        engine.say("??")
-        pause(PAUSA_BREVE)
-        engine.say("??")
-        pause(PAUSA_BREVE)
-        engine.say("??")
-        pause(PAUSA_BREVE)
-        break
-    elif risposta == "no":
-        engine.say("Ok, allora parliamo di altro")
-        break
-    else:
-        fraintedimento += fraintedimento+1
-        non_capisco(reachy, "risposta", fraintendimento)
+        risposta = ascolto_risposta()
+        if risposta == "si":
+            engine.say("??")
+            engine.pause(PAUSA_BREVE)
+            engine.say("??")
+            engine.pause(PAUSA_BREVE)
+            engine.say("??")
+            engine.pause(PAUSA_BREVE)
+        elif risposta == "no":
+            engine.say("Ok, allora parliamo di altro")
+        else:
+            fraintedimento += fraintedimento+1
+            non_capisco(reachy, "risposta", fraintendimento)
 
+    engine.pause(PAUSA_BREVE)
+    engine.say("Lei come si chiama? Risponda con il suo nome")
+    engine.pause(PAUSA_LUNGA)
+    nome = ascolto_risposta()
+    nomi_pazienti.append(nome)
 
+    engine.say(f"Piacere di conoscerla {nome}")
+    engine.pause(PAUSA_BREVE)
 
-        
+    engine.say("Da che regione viene?")
+    engine.pause(PAUSA_LUNGA)
+    luogo = ascolto_risposta()
+    risposta_dialetto=ottieni_regione(luogo)
+    engine.say(f"{risposta_dialetto}")
+    engine.pause(PAUSA_BREVE)
+    engine.say("Ho imparato qualche frase in dialetto, anche se sicuramnete non ho la giusta pronuncia")
     
-    #input vocale utente 
-
-def non_capisco(reachy: ReachyMini, contesto: str = "risposta", fraintendimento: int = 0) -> str:
     
-    match 
-     case 1 
-     fraintendimento == 1 
-     pause(PAUSA_BREVE)
-        #movimento robot 
-        engine.say("I miei circuiti sono lenti, scusami, può ripetere?")
-        return ascolto_risposta()
 
-    case 2 
-    fraintendimento == 2 
-        engine.say( "Scusi, oggi non riesco a sentire bene"
-        f"Potrebbe ripetere {contesto}? Voglio capire bene.")
-        return ascolto_risposta()
-    case 3 
-    fraintendimento == 3 
-        engine.say("oggi proprio non riesco a funzionare, scusami. Parliamo di altro")
-        return 
+
+
+    
+
+
+
+
+
+
 
     
     """
@@ -131,22 +162,26 @@ def non_capisco(reachy: ReachyMini, contesto: str = "risposta", fraintendimento:
 
 def scelta(reachy: ReachyMini): 
     engine.say("Cosa vuole fare oggi?")
-    pause(PAUSA_BREVE)
+    engine.pause(PAUSA_BREVE)
     engine.say("Vuoi ascoltare un po' di musica o sapere le ultime notizie?")
     risposta = ascolto_risposta()
-    match 
-    case 1
-    risposta == "Musica"
-    engine.say("Qual è il suo cantante preferito?")
-    cantante = ascolto_risposta()
-    #fai partire la musica in base al cantante scelto 
-    case 2 
-    risposta == "Notizie"
-    engine.say("Cosa le interessa? Il meteo, l'attualità o lo sport?")
-    notizie = ascolto_risposta ()
-    #fai partire le notizie in base alla scelta 
-    case 3 
-    #invocare funzione spegnimento
+    match scelta:
+        case 1:
+            risposta == "Musica"
+            engine.say("Qual è il suo cantante preferito?")
+            cantante = ascolto_risposta()
+            #fai partire la musica in base al cantante scelto 
+        case 2:
+            risposta == "Notizie"
+            engine.say("Cosa le interessa? Il meteo, l'attualità o lo sport?")
+            notizie = ascolto_risposta ()
+            #fai partire le notizie in base alla scelta 
+        case 3:
+            #invocare funzione spegnimento
+    return 
+
+def chiacchierata_iniziale(reachy: ReachyMini):
+
 
 
 def saluto_finale(reachy: ReachyMini)
@@ -157,29 +192,32 @@ def saluto_finale(reachy: ReachyMini)
 
 
 
-def saluto(reachy: ReachyMini):
-    #il robot deve avvicinarsi a Carmela e fare un saluto con la mano
-    reachy.arm.right.raise_up(30)
-    reachy.arm.right.wave()
-    reachy.arm.right.lower()
-    engine.say("Ciao, sono Reachy. Come stai?")
 
+
+
+#----------------------FLUSSO DELL'INTERAZIONE----------------------
 def main(reachy: ReachyMini):
     saluto(reachy)
-    pause(PAUSA_BREVE)
+    engine.pause(PAUSA_BREVE)
+
     presentazione(reachy)
-    pause(PAUSA_BREVE)
-    scelta(reachy)
+    engine.pause(PAUSA_BREVE)
+
+    scelta(reachy) #notizie o musica 
+
+    chiacchierata_iniziale(reachy)
+
     saluto_finale(reachy)
 
 
 
-   chiacchierata_iniziale(reachy)
+   
    notizie(reachy)
    musica(reachy)
    spegnimento(reachy)
     
-def chiacchierata_iniziale(reachy: ReachyMini):
+
+
 
 def notizie(reachy: ReachyMini):
 
