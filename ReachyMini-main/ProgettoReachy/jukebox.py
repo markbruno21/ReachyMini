@@ -1,10 +1,8 @@
-import time
 import random
-import json
-import pyttsx3
 import speech_recognition as sr
+from audio_utils import parla, pausa_vocale
 import pygame 
-from main import ReachyMini, VELOCITA_PARLATA, PAUSA_BREVE, PAUSA_LUNGA, engine, RECOGNIZER, MIC, ascolto_risposta, inizializza_robot
+from main import ReachyMini, PAUSA_BREVE, PAUSA_LUNGA, engine, ascolto_risposta, inizializza_robot, lista_canzoni
 
 frasi_incoraggiamento = [
     "Quasi! Ma non è la risposta corretta. Riproviamo!",
@@ -34,13 +32,11 @@ canzoni_giocate = []
 canzone_corrente = None
 gioco_terminato = False
 
-def carica_playlist(canzoni):
-    with open(canzoni, 'r', encoding='utf-8') as file: #r serve per leggere il file, encoding serve per leggere i caratteri speciali
-        playlist = json.load(file)
-    return playlist
+
 
 pygame.mixer.init()
-lista_canzoni = carica_playlist("canzoni.json")
+
+
 
 def inizializza_gioco():
     inizializza_robot()
@@ -62,34 +58,34 @@ def inizializza_gioco():
 
 #----------------------FUNZIONI PER JUKBOXE----------------------
 def presentazione_gioco(reachy: ReachyMini):
-    engine.say("Benvenuti al gioco del Jukebox!")
-    engine.pause(PAUSA_BREVE)
-    engine.say("Io sono Reachy, e insieme all'animatrice, vi faremo ascoltare delle canzoni.")
-    engine.pause(PAUSA_BREVE)
-    engine.say("Il gioco è semplice: quando pensate di sapere il titolo della canzone alzate la mano.")
-    engine.pause(PAUSA_BREVE)
-    engine.say("L'animatrice fermerà la musica e vi chiederà la risposta")
-    engine.pause(PAUSA_BREVE)
-    engine.say("Se la risposta è corretta, guadagnerete un punto e passeremo alla canzone successiva.")
-    engine.pause(PAUSA_BREVE)
-    engine.say("Altrimenti se è sbagliata non vi preoccupate, la musica ricomincierà e potrete riprovare!")
-    engine.pause(PAUSA_BREVE)
-    engine.say("Dopo 15 canzoni, il gioco terminerà e vedremo chi è il vincitore!")
-    engine.pause(PAUSA_BREVE)
+    parla("Benvenuti al gioco del Jukebox!")
+    pausa_vocale(PAUSA_BREVE)
+    parla("Io sono Reachy, e insieme all'animatrice, vi faremo ascoltare delle canzoni.")
+    pausa_vocale(PAUSA_BREVE)
+    parla("Il gioco è semplice: quando pensate di sapere il titolo della canzone alzate la mano.")
+    pausa_vocale(PAUSA_BREVE)
+    parla("L'animatrice fermerà la musica e vi chiederà la risposta")
+    pausa_vocale(PAUSA_BREVE)
+    parla("Se la risposta è corretta, guadagnerete un punto e passeremo alla canzone successiva.")
+    pausa_vocale(PAUSA_BREVE)
+    parla("Altrimenti se è sbagliata non vi preoccupate, la musica ricomincierà e potrete riprovare!")
+    pausa_vocale(PAUSA_BREVE)
+    parla("Dopo 15 canzoni, il gioco terminerà e vedremo chi è il vincitore!")
+    pausa_vocale(PAUSA_BREVE)
 
 def inizializza_giocatori(stato_gioco):
-    engine.say("Prima di iniziare, registriamo i nomi dei giocatori.")
-    engine.pause(PAUSA_BREVE)
-    engine.say("Animatrice, per favore, dimmi un nome alla volta. Quando hai finito, dì 'fine'.")
+    parla("Prima di iniziare, registriamo i nomi dei giocatori.")
+    pausa_vocale(PAUSA_BREVE)
+    parla("Animatrice, per favore, dimmi un nome alla volta. Quando hai finito, dì 'fine'.")
    
     while True:
         nome_giocatore = ascolto_risposta()
         if nome_giocatore in ["fine", "terminato", "stop", "basta", "finito"]:
-            engine.say("Grazie! Ora siamo pronti per iniziare il gioco.")
+            parla("Grazie! Ora siamo pronti per iniziare il gioco.")
             break
         else:
             stato_gioco["giocatori_punteggi"][nome_giocatore] = 0 #inizializza punteggio a 0 per ogni nome    
-            engine.say(f"{nome_giocatore} registrato!")
+            parla(f"{nome_giocatore} registrato!")
 
     return stato_gioco["giocatori_punteggi"]
 
@@ -116,9 +112,9 @@ def fine_gioco(stato_gioco):
     #ciclo per vedere se ci sono pareggi 
     if punteggio_max != classifica_finale[1][1]:
         nome_vincitore, punteggio_vincitore = classifica_finale[0]
-        engine.say("Il vincitore è ...")
-        engine.pause(PAUSA_LUNGA)
-        engine.say(f"{nome_vincitore} con {punteggio_vincitore} punti! Complimenti!")
+        parla("Il vincitore è ...")
+        pausa_vocale(PAUSA_LUNGA)
+        parla(f"{nome_vincitore} con {punteggio_vincitore} punti! Complimenti!")
 
     elif punteggio_max == classifica_finale[1][1]:
         vincitori=[]
@@ -126,70 +122,70 @@ def fine_gioco(stato_gioco):
         while i<len(classifica_finale) and punteggio_max==classifica_finale[i][1]:
             vincitori.append(classifica_finale[i][0])
             i+=1
-        engine.say("Aspettate, abbiamo un pareggio!")
-        engine.pause(PAUSA_BREVE)
-        engine.say("I vincitori sono...")
-        engine.pause(PAUSA_LUNGA)
-        engine.say("I vincitori sono:")
+        parla("Aspettate, abbiamo un pareggio!")
+        pausa_vocale(PAUSA_BREVE)
+        parla("I vincitori sono...")
+        pausa_vocale(PAUSA_LUNGA)
+        parla("I vincitori sono:")
         for nome in vincitori:
-            engine.pause(PAUSA_BREVE)
-            engine.say(f"{nome} con {punteggio_max} punti!")
+            pausa_vocale(PAUSA_BREVE)
+            parla(f"{nome} con {punteggio_max} punti!")
 
     #saluti finali        
-    engine.pause(PAUSA_BREVE)
-    engine.say("Grazie a tutti per aver partecipato! È stato bello giocare con voi!")
+    pausa_vocale(PAUSA_BREVE)
+    parla("Grazie a tutti per aver partecipato! È stato bello giocare con voi!")
 
 
 #----------------------COMANDI ANIMATRICE----------------------
 #stop al gioco in qualsiasi momento nel caso di emergenza
 def start_gioco(reachy, comando):
     #"inizia il gioco" 
-    engine.say("Se siamo tutti ponti, animatrice dimmi 'via'!")
-    engine.pause(PAUSA_BREVE)
+    parla("Se siamo tutti ponti, animatrice dimmi 'via'!")
+    pausa_vocale(PAUSA_BREVE)
     risposta = ascolto_risposta()
     if risposta == "via":
-        engine.say("Perfetto! Iniziamo il gioco!")              #condizione per gestire il no mglio
+        parla("Perfetto! Iniziamo il gioco!")              #condizione per gestire il no mglio
         #inizia il gioco
     else:
-        engine.say("Non ho capito, ripetilo per favore.")
+        parla("Non ho capito, ripetilo per favore.")
         start_gioco(reachy, comando)
 
 def stop_gioco(stato_gioco, comando):
     #"interrompi il gioco" in caso di emergenzaa 
     pygame.mixer.music.pause()
-    engine.say("Il gioco è stato momentaneamente interrotto")
-    engine.pause(PAUSA_LUNGA)
-    engine.say("Animatrice, vuoi riprendere il gioco? dimmi si o no")
+    parla("Il gioco è stato momentaneamente interrotto")
+    pausa_vocale(PAUSA_LUNGA)
+    parla("Animatrice, vuoi riprendere il gioco? dimmi si o no")
     risposta = ascolto_risposta()
     if risposta == "si":
-        engine.say("Perfetto! Riprendiamo il gioco!")
+        parla("Perfetto! Riprendiamo il gioco!")
         pygame.mixer.music.unpause()
         return True
     elif risposta == "no":
-        engine.say("Va bene, il gioco termina qui. Grazie a tutti per aver partecipato! È stato bello giocare con voi!")
+        parla("Va bene, il gioco termina qui. Grazie a tutti per aver partecipato! È stato bello giocare con voi!")
         stato_gioco["gioco_terminato"] = True
         return False
     else:
-        engine.say("Non ho capito, ripetilo per favore.")
+        parla("Non ho capito, ripetilo per favore.")
     
      
 #ferma la musica (per far dire titolo della canzone)
 def ferma_musica(stato_gioco, canzone_corrente):
     pygame.mixer.music.pause()
-    engine.say("Animatrice, per favore, chiedi al giocatore il titolo della canzone.")
+    parla("Animatrice, per favore, chiedi al giocatore il titolo della canzone.")
     titolo_risposta = ascolto_risposta()
     #se risposta giusta -> assegna punto 
     if titolo_risposta == canzone_corrente["titolo"]:
         pygame.mixer.music.stop()
-        engine.say("Risposta corretta! A chi assegno il punto?")
+        parla("Risposta corretta! A chi assegno il punto?")
         giocatore=ascolto_risposta()
         stato_gioco["giocatori_punteggi"][giocatore] += 1
-        engine.say(f"Perfetto! {giocatore} ha guadagnato un punto!")
+        parla(f"Perfetto! {giocatore} ha guadagnato un punto!")
         return True
     #se risposta sbagliata -> nessun punto -> riprende la stessa canzone
     elif titolo_risposta != canzone_corrente["titolo"]:
-        engine.say(random.choice(frasi_incoraggiamento))
-        engine.pause(PAUSA_BREVE)
+        parla(random.choice(frasi_incoraggiamento))
+        pausa_vocale(PAUSA_BREVE)
         pygame.mixer.music.unpause()
         return False
 
@@ -207,7 +203,7 @@ def jukebox(reachy: ReachyMini, comando: str):
         canzone_corrente = estrai_canzone(stato_gioco)
        
         if canzone_corrente is None:
-            engine.say("Tutte le canzoni sono state giocate. Il gioco termina qui.")
+            parla("Tutte le canzoni sono state giocate. Il gioco termina qui.")
             break
 
         pygame.mixer.music.load(canzone_corrente["file_path"])
@@ -235,9 +231,9 @@ def jukebox(reachy: ReachyMini, comando: str):
             tempo_trascorso = pygame.mixer.music.get_pos()
             if tempo_trascorso > 60000: #1 minuto
                 pygame.mixer.music.pause() #pausa la musica per dare l'indizio
-                engine.say(f"Indizio: il cantante di questa canzone è {canzone_corrente['artista']}")
-                engine.pause(PAUSA_BREVE)
-                engine.say("Ora riparte la musica!")
+                parla(f"Indizio: il cantante di questa canzone è {canzone_corrente['artista']}")
+                pausa_vocale(PAUSA_BREVE)
+                parla("Ora riparte la musica!")
                 pygame.mixer.music.unpause() #riprende la musica dopo l'indizio
             #aspettare altri 30 secondi -> se nessuno indovina -> dire il titolo e cambiare canzone
             while True:
@@ -249,9 +245,9 @@ def jukebox(reachy: ReachyMini, comando: str):
                         continue
                 if tempo_trascorso > 90000: #1 minuto + 30 secondi
                     pygame.mixer.music.stop() #ferma la musica
-                    engine.say("Mannaggia, questa era difficile!")
-                    engine.pause(PAUSA_BREVE)
-                    engine.say(f"Il titolo di questa canzone è {canzone_corrente['titolo']}. Ascoltiamo un'altra canzone!")
+                    parla("Mannaggia, questa era difficile!")
+                    pausa_vocale(PAUSA_BREVE)
+                    parla(f"Il titolo di questa canzone è {canzone_corrente['titolo']}. Ascoltiamo un'altra canzone!")
                     break #riprende da riga 182
     
     fine_gioco(stato_gioco)
