@@ -59,22 +59,19 @@ def ascolto_risposta_empatico():
     
     
 def non_capisco(reachy: ReachyMini, contesto: str = "risposta", fraintendimento: int = 0) -> str:
-    match fraintendimento:
-        case 1:
-            fraintendimento == 1 
-            engine.pause(PAUSA_BREVE)
-            #movimento robot 
-            engine.say("I miei circuiti sono lenti, scusami, può ripetere?")
-            return ascolto_risposta()
-        case 2:
-            fraintendimento == 2 
-            engine.say( "Scusi, oggi non riesco a sentire bene"
-            f"Potrebbe ripetere {contesto}? Voglio capire bene.")
-            return ascolto_risposta()
-        case 3:
-            fraintendimento == 3 
-            engine.say("oggi proprio non riesco a funzionare, scusami. Parliamo di altro")
-            return 
+    if fraintendimento==1:
+        engine.pause(PAUSA_BREVE)
+        #movimento robot 
+        engine.say("I miei circuiti sono lenti, scusami, può ripetere?")
+        return ascolto_risposta()
+    elif fraintendimento == 2:
+        engine.say( "Scusi, oggi non riesco a sentire bene"
+        f"Potrebbe ripetere {contesto}? Voglio capire bene.")
+        return ascolto_risposta()
+    elif fraintendimento == 3:
+        engine.say("oggi proprio non riesco a funzionare, scusami. Parliamo di altro")
+        return 
+    
 
 #----------------------FUNZIONI PER L'INTERAZIONE----------------------
 def saluto(reachy: ReachyMini):
@@ -109,7 +106,7 @@ def presentazione(reachy: ReachyMini):
         elif risposta == "no":
             engine.say("Ok, allora parliamo di altro")
         else:
-            fraintedimento += fraintedimento+1
+            fraintendimento = fraintendimento+1
             non_capisco(reachy, "risposta", fraintendimento)
 
     engine.pause(PAUSA_BREVE)
@@ -136,32 +133,30 @@ def scelta(reachy: ReachyMini):
     engine.pause(PAUSA_BREVE)
     engine.say("Vuoi ascoltare una canzone o sapere le ultime notizie? Rispondi con 'canzone' o 'notizie' oppure 'no'")
     risposta = ascolto_risposta_empatico()
-    match risposta:
-        case 1:
-            risposta == "canzone"
-            canzone=random.choice(lista_canzoni)
-            pygame.mixer.init()
-            pygame.mixer.music.load(canzone["file_path"])
-            pygame.mixer.music.play()  
-            
-            while pygame.mixer.music.get_busy():  # finché la musica sta suonando
-                comando = ascolto_risposta()
-                if comando in ["stop", "basta", "fermo", "ferma", "fermati", "smetti"]:
-                    pygame.mixer.music.stop()
-                    engine.say("Ok, ho fermato la canzone.")
-                    break
+    if risposta == "canzone":
+        canzone=random.choice(lista_canzoni)
+        pygame.mixer.init()
+        pygame.mixer.music.load(canzone["file_path"])
+        pygame.mixer.music.play()  
+        
+        while pygame.mixer.music.get_busy():  # finché la musica sta suonando
+            comando = ascolto_risposta()
+            if comando in ["stop", "basta", "fermo", "ferma", "fermati", "smetti"]:
+                pygame.mixer.music.stop()
+                engine.say("Ok, ho fermato la canzone.")
+                break
 
-            engine.pause(PAUSA_BREVE)
-            engine.say("Spero le sia piaciuta.")
+        engine.pause(PAUSA_BREVE)
+        engine.say("Spero le sia piaciuta.")
 
-        case 2:
-            risposta == "Notizie"
-            engine.say("Cosa le interessa? Il meteo, l'attualità o lo sport?")
-            notizie = ascolto_risposta ()
-            #fai partire le notizie in base alla scelta 
-        case 3:
-            risposta == "no"
-            engine.say("okay, va bene!")
+    elif risposta == "notizie":
+        engine.say("Cosa le interessa? Il meteo, l'attualità o lo sport?")
+        notizie = ascolto_risposta ()
+        #fai partire le notizie in base alla scelta 
+    elif risposta == "no":
+        engine.say("okay, va bene!")
+    else: 
+        engine.say("Non ho capito")
     return 
 
 def saluto_finale(reachy: ReachyMini):
