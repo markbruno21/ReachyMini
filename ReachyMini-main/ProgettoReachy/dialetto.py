@@ -1,29 +1,29 @@
 
 DIALETTI = {
-    "Piemonte": "<prosody rate='90%'>Cume stèje, <break time='250ms'/> car?</prosody>",
-    "Valle_d_Aosta": "<prosody rate='90%'>Coment <break time='200ms'/> ve lo?</prosody>",
-    "Lombardia": "<prosody rate='90%'>Fém dü ciàcher <break time='300ms'/> insema?</prosody>",
-    "Veneto": "<prosody rate='90%'>Cossa te gà in mente <break time='250ms'/> de belo?</prosody>",
-    "Trentino_Alto_Adige": "<prosody rate='90%'>Come stat, <break time='200ms'/> tut a post?</prosody>",
-    "Friuli_Venezia_Giulia": "<prosody rate='90%'>Mandi, <break time='200ms'/> come va?</prosody>",
-    "Liguria": "<prosody rate='90%'>Cöse gh'æ da mangiâ <break time='250ms'/> de bon?</prosody>",
-    "Emilia_Romagna": "<prosody rate='90%'>Com'andela, <break time='250ms'/> vècia?</prosody>",
-    "Toscana": "<prosody rate='90%'>Oh, <break time='200ms'/> tu come stai oggi?</prosody>",
-    "Umbria": "<prosody rate='90%'>Com'è ita, <break time='200ms'/> oggi?</prosody>",
-    "Marche": "<prosody rate='90%'>Com'andemo, <break time='200ms'/> caru?</prosody>",
-    "Lazio": "<prosody rate='95%' pitch='+5%'>Aò, <break time='200ms'/> come te senti oggi?</prosody>",
-    "Abruzzo": "<prosody rate='90%'>Comu stèje, <break time='250ms'/> cumparì?</prosody>",
-    "Molise": "<prosody rate='90%'>Che se dice <break time='200ms'/> de bello?</prosody>",
-    "Campania": "<prosody rate='90%' pitch='+5%'>Comm' <break time='250ms'/> è bell' a te vedè!</prosody>",
-    "Puglia": "<prosody rate='90%'>Comu stai, <break time='250ms'/> de mmi?</prosody>",
-    "Basilicata": "<prosody rate='90%'>Uè, <break time='200ms'/> com'è ita?</prosody>",
-    "Calabria": "<prosody rate='90%'>Comu va, <break time='250ms'/> picciottu?</prosody>",
-    "Sicilia": "<prosody rate='85%'>Comu staju, <break time='300ms'/> beddu?</prosody>",
-    "Sardegna": "<prosody rate='90%'>Cumente ses, <break time='250ms'/> caru?</prosody>"
+    "Piemonte":              "Cume stèje, car?",
+    "Valle_d_Aosta":         "Coment ve lo?",
+    "Lombardia":             "Fém dü ciàcher insema?",
+    "Veneto":                "Cossa te gà in mente de belo?",
+    "Trentino_Alto_Adige":   "Come stat, tut a post?",
+    "Friuli_Venezia_Giulia": "Mandi, come va?",
+    "Liguria":               "Cöse gh'æ da mangiâ de bon?",
+    "Emilia_Romagna":        "Com'andela, vècia?",
+    "Toscana":               "Oh, tu come stai oggi?",
+    "Umbria":                "Com'è ita, oggi?",
+    "Marche":                "Com'andemo, caru?",
+    "Lazio":                 "Aò, come te senti oggi?",
+    "Abruzzo":               "Comu stèje, cumparì?",
+    "Molise":                "Che se dice de bello?",
+    "Campania":              "Comm' è bell'a te vedè!",
+    "Puglia":                "Comu stai, de mmi?",
+    "Basilicata":            "Uè, com'è ita?",
+    "Calabria":              "Comu va, picciottu?",
+    "Sicilia":               "Comu staju, beddu?",
+    "Sardegna":              "Cumente ses, caru?",
 }
 
 def ottieni_regione(input_utente):
-    testo=input_utente
+    testo=input_utente.lower()
     
     if "piemonte" in testo or "torino" in testo: 
         return DIALETTI["Piemonte"]  
