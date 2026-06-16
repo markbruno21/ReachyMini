@@ -130,10 +130,9 @@ def fine_gioco(stato_gioco):
         engine.pause(PAUSA_BREVE)
         engine.say("I vincitori sono...")
         engine.pause(PAUSA_LUNGA)
-        engine.say("I vincitori sono:")
         for nome in vincitori:
-            engine.pause(PAUSA_BREVE)
             engine.say(f"{nome} con {punteggio_max} punti!")
+            engine.pause(PAUSA_BREVE)
 
     #saluti finali        
     engine.pause(PAUSA_BREVE)

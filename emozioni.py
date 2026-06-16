@@ -1,8 +1,17 @@
 
 import time
+import pyttsx3
 from reachy_mini import ReachyMini
 from main import ascolta_risposta, PAUSA_BREVE, PAUSA_LUNGA
 
+VELOCITA_PARLATA = 1.4           # Secondi di pausa dopo ogni battuta. Rispettare i tempi di elaborazione di un utente anziano senza risultare incalzante
+PAUSA_BREVE = 0.8                # Pausa breve tra azioni multimodali, per lasciare il tempo necessario per rispondere senza stress
+PAUSA_LUNGA = 2.5                # Pausa lunga per lasciare rispondere
+
+engine = pyttsx3.init()
+engine.setProperty('rate', VELOCITA_PARLATA) 
+engine.setProperty('pause', PAUSA_BREVE)
+engine.setProperty('pauseLong', PAUSA_LUNGA)
 
 KEYWORD_EMOZIONI = {
     "felice": [
@@ -71,8 +80,37 @@ def rileva_emozione(risposta):
     
 
 def gestisci_emozione(emozione, reachy):
- 
-    match emozione:
+    
+    if emozione in emozioni_negative:
+        engine.say("Mi dipsiace sentirti dire queste parole")
+        engine.pause(PAUSA_BREVE)
+        engine.say("Vuoi che chiami un assistente che possa aiutarti? rispondi con 'si' o 'no'")
+        conferma=ascolta_risposta()
+        if conferma == "si":
+            engine.say("Chiamo subito un assistente per te.")
+            return None
+        else:
+            engine.say("Dai, allora cambiamo argomento")
+
+    elif emozione in emozioni_spiacevoli:
+        engine.say("Va tutto bene? rispondi con 'si' o 'no'")
+        conferma=ascolta_risposta()
+        if conferma == "no":
+            engine.say("Vuoi che chiami un assistente che possa aiutarti? rispondi con 'si' o 'no'")
+            conferma=ascolta_risposta()
+            if conferma == "si":
+                engine.say("Chiamo subito un assistente per te.")
+                return None
+            else:
+                engine.say("Dai, allora cambiamo argomento")
+        else:
+            engine.say("Okay, volevo assicurarmi che stessi bene.")
+            engine.pause(PAUSA_BREVE)
+    else:
+        engine.say("è bello vederti felice")
+    
+    
+    """ match emozione:
  
         case "felice":
             reachy.head.look_forward()
@@ -160,4 +198,4 @@ def gestisci_emozione(emozione, reachy):
         case _:
             # Case di default
             parla("Sono qui con te, qualunque cosa tu stia sentendo.")
-            return True
+            return True """

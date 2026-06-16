@@ -5,7 +5,7 @@ import pygame
 import speech_recognition as sr
 from dialetto import ottieni_regione, DIALETTI
 from jukebox import lista_canzoni
-from emozioni import rileva_emozione
+from emozioni import rileva_emozione, gestisci_emozione
 
 
 VELOCITA_PARLATA = 1.4           # Secondi di pausa dopo ogni battuta. Rispettare i tempi di elaborazione di un utente anziano senza risultare incalzante
@@ -51,8 +51,11 @@ def ascolto_risposta() -> str:
         
 def ascolto_risposta_empatico():
     risposta = ascolto_risposta()
-    rileva_emozione(risposta)
+    emozione=rileva_emozione(risposta)
+    if emozione:
+        gestisci_emozione(emozione)
     return risposta
+     
     
     
 def non_capisco(reachy: ReachyMini, contesto: str = "risposta", fraintendimento: int = 0) -> str:
@@ -176,14 +179,3 @@ def main(reachy: ReachyMini):
 
 
     saluto_finale(reachy)
-
-
-    
-
-
-
-def notizie(reachy: ReachyMini):
-
-def musica(reachy: ReachyMini):
-
-def spegnimento(reachy: ReachyMini):
