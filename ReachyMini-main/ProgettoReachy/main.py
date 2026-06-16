@@ -115,7 +115,7 @@ def presentazione(reachy: ReachyMini):
     engine.pause(PAUSA_BREVE)
     engine.say("Lei come si chiama? Risponda con il suo nome")
     engine.pause(PAUSA_LUNGA)
-    nome = ascolto_risposta()
+    nome = ascolto_risposta_empatico()
     nomi_pazienti.append(nome)
 
     engine.say(f"Piacere di conoscerla {nome}")
@@ -123,7 +123,7 @@ def presentazione(reachy: ReachyMini):
 
     engine.say("Da che regione viene?")
     engine.pause(PAUSA_LUNGA)
-    luogo = ascolto_risposta()
+    luogo = ascolto_risposta_empatico()
     risposta_dialetto=ottieni_regione(luogo)
     engine.say(f"{risposta_dialetto}")
     engine.pause(PAUSA_BREVE)
@@ -135,14 +135,22 @@ def scelta(reachy: ReachyMini):
     engine.say("Cosa vuole fare oggi?")
     engine.pause(PAUSA_BREVE)
     engine.say("Vuoi ascoltare una canzone o sapere le ultime notizie? Rispondi con 'canzone' o 'notizie' oppure 'no'")
-    risposta = ascolto_risposta()
-    match scelta:
+    risposta = ascolto_risposta_empatico()
+    match risposta:
         case 1:
             risposta == "canzone"
             canzone=random.choice(lista_canzoni)
             pygame.mixer.init()
             pygame.mixer.music.load(canzone["file_path"])
-            pygame.mixer.music.play()
+            pygame.mixer.music.play()  
+            
+            while pygame.mixer.music.get_busy():  # finché la musica sta suonando
+                comando = ascolto_risposta()
+                if comando in ["stop", "basta", "fermo", "ferma", "fermati", "smetti"]:
+                    pygame.mixer.music.stop()
+                    engine.say("Ok, ho fermato la canzone.")
+                    break
+
             engine.pause(PAUSA_BREVE)
             engine.say("Spero le sia piaciuta.")
 
@@ -153,10 +161,10 @@ def scelta(reachy: ReachyMini):
             #fai partire le notizie in base alla scelta 
         case 3:
             risposta == "no"
-            #invocare funzione spegnimento
+            engine.say("okay, va bene!")
     return 
 
-def saluto_finale(reachy: ReachyMini)
+def saluto_finale(reachy: ReachyMini):
     engine.say("È stato bello questo tempo speso insieme")
     engine.pause(PAUSA_BREVE)
     engine.say ("ci rivediamo nei corridoi")
