@@ -124,14 +124,14 @@ def presentazione(reachy: ReachyMini):
     risposta_dialetto=ottieni_regione(luogo)
     parla(f"{risposta_dialetto}")
     pausa_vocale(PAUSA_BREVE)
-    parla("Ho imparato qualche frase in dialetto, anche se sicuramnete non ho la giusta pronuncia")
+    parla("Ho imparato qualche frase in dialetto, anche se sicuramente non ho la giusta pronuncia")
 
 
 
 def scelta(reachy: ReachyMini): 
     parla("Cosa vuole fare oggi?")
     pausa_vocale(PAUSA_BREVE)
-    parla("Vuoi ascoltare una canzone o sapere le ultime notizie? Rispondi con 'canzone' o 'notizie' oppure 'meteo'. Per uscire dica No!")
+    parla("Vuoi ascoltare una canzone, sapere le ultime notizie o vuoi che ti dica il meteo? Rispondi con 'canzone' o 'notizie' oppure 'meteo'. Per uscire dica No!")
     risposta = ascolto_risposta_empatico()
     if risposta == "canzone":
         canzone=random.choice(lista_canzoni)
