@@ -1,5 +1,7 @@
 import os
 import json
+import numpy as np
+import pygame
 import speech_recognition as sr
 from vosk import Model, KaldiRecognizer
 from emozioni import rileva_emozione, gestisci_emozione
@@ -17,13 +19,27 @@ else:
     print(f"[MIC-SETUP] ⚠ Modello non trovato in '{MODEL_PATH}'. Fallback offline disabilitato.")
     MODELLO_VOSK = None
 
+#per il beep
+pygame.mixer.init()  # una sola volta, all'avvio del programma
+
+def suona_beep(frequenza=880, durata_ms=200, volume=0.5):
+    sample_rate = pygame.mixer.get_init()[0]
+    n_samples = int(sample_rate * durata_ms / 1000)
+    t = np.linspace(0, durata_ms / 1000, n_samples, False)
+    onda = np.sin(frequenza * t * 2 * np.pi)
+    audio = np.int16(onda * 32767 * volume)
+    stereo = np.column_stack((audio, audio))
+    suono = pygame.sndarray.make_sound(stereo)
+    suono.play()
+    pygame.time.wait(durata_ms)
 
 def ascolto_risposta() -> str:
     """Ascolta il microfono, tenta con Google e ripiega su Vosk in caso di errore."""
     with sr.Microphone() as source:
         print("[MIC] Calibrazione rumore ambientale (0.5s)...")
         RECOGNIZER.adjust_for_ambient_noise(source, duration=0.5)
-        # vai partire un suono
+        # fai partire bip
+        suona_beep()
         print("[MIC] In ascolto...")
         
         try:
