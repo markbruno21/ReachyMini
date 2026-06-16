@@ -7,7 +7,7 @@ from emozioni import rileva_emozione, gestisci_emozione
 from audio_utils import parla, pausa_vocale
 from reachy_mini_mock import ReachyMini
 from microphone_utils import ascolto_risposta, ascolto_risposta_empatico
-from puliziatesto import estrai_nome
+from puliziatesto import estrai_nome, interpreta_si_no
 
 VELOCITA_PARLATA = 1.4           # Secondi di pausa dopo ogni battuta. Rispettare i tempi di elaborazione di un utente anziano senza risultare incalzante
 PAUSA_BREVE = 0.8                # Pausa breve tra azioni multimodali, per lasciare il tempo necessario per rispondere senza stress
@@ -85,12 +85,13 @@ def presentazione(reachy: ReachyMini):
     pausa_vocale(PAUSA_LUNGA)
 
     risposta = ascolto_risposta()
+    scelta= interpreta_si_no(risposta)
     
 	## 1) funzione che capisce se si o no dalla stringa trascritta...
-    
+    ## DONE
     # risposta = classifica_risposte(risposta)
     while fraintendimento < 3:
-        if risposta == "sì":
+        if scelta == "si":
             parla("Mi piace stare in compagnia e adoro chiaccherare.")
             pausa_vocale(PAUSA_BREVE)
             parla("Ovviamente mi piace anche la tecnologia, ma ancora di più la musica")
@@ -98,7 +99,7 @@ def presentazione(reachy: ReachyMini):
             parla("Non sono qui per sostituire le bravissime assistenti umane, ma per essere d'aiuto nelle attività quotidiane")
             pausa_vocale(PAUSA_BREVE)
             break
-        elif risposta == "no":
+        elif scelta == "no":
             parla("Ok, allora parliamo di altro")
             break
         else:
@@ -110,6 +111,7 @@ def presentazione(reachy: ReachyMini):
     pausa_vocale(PAUSA_LUNGA)
     
 	## 2) funzione che estrare il nome proprio di persona dalla stringa trascritta 
+    ## DONE
     risposta = ascolto_risposta_empatico()
     nome = estrai_nome(risposta)
     nomi_pazienti.append(nome)
@@ -121,6 +123,7 @@ def presentazione(reachy: ReachyMini):
     pausa_vocale(PAUSA_LUNGA)
     
 	## 3) funzione che estrae la regione italiana dalla stringa
+    ## DONE
     
     luogo = ascolto_risposta_empatico()
     risposta_dialetto=ottieni_regione(luogo)
