@@ -12,8 +12,8 @@ VELOCITA_PARLATA = 1.4           # Secondi di pausa dopo ogni battuta. Rispettar
 PAUSA_BREVE = 0.8                # Pausa breve tra azioni multimodali, per lasciare il tempo necessario per rispondere senza stress
 PAUSA_LUNGA = 2.5                # Pausa lunga per lasciare rispondere
 
-##TODO  1) modify the function
 from meteo import controlla_meteo
+##TODO  1) modify the function for reading news
 from news import leggi_notizie
 
 
@@ -80,7 +80,7 @@ def presentazione(reachy: ReachyMini):
     parla("Il mio compito è quello di farti compagnia e aiutare come posso")
     pausa_vocale(PAUSA_BREVE)
 
-    parla("Vuoi sapere di più su di me? Rispondi con 'si' o 'no'")
+    parla("Vuoi sapere di più su di me? Rispondi con Sì o No'")
     pausa_vocale(PAUSA_LUNGA)
 
     risposta = ascolto_risposta()
@@ -89,13 +89,14 @@ def presentazione(reachy: ReachyMini):
     
     # risposta = classifica_risposte(risposta)
     while fraintendimento < 3:
-        if risposta == "s":
+        if risposta == "sì":
             parla("Mi piace stare in compagnia e adoro chiaccherare.")
             pausa_vocale(PAUSA_BREVE)
             parla("Ovviamente mi piace anche la tecnologia, ma ancora di più la musica")
             pausa_vocale(PAUSA_BREVE)
             parla("Non sono qui per sostituire le bravissime assistenti umane, ma per essere d'aiuto nelle attività quotidiane")
             pausa_vocale(PAUSA_BREVE)
+            break
         elif risposta == "no":
             parla("Ok, allora parliamo di altro")
         else:
@@ -130,7 +131,7 @@ def presentazione(reachy: ReachyMini):
 def scelta(reachy: ReachyMini): 
     parla("Cosa vuole fare oggi?")
     pausa_vocale(PAUSA_BREVE)
-    parla("Vuoi ascoltare una canzone o sapere le ultime notizie? Rispondi con 'canzone' o 'notizie' oppure 'no'")
+    parla("Vuoi ascoltare una canzone o sapere le ultime notizie? Rispondi con 'canzone' o 'notizie' oppure 'meteo'. Per uscire dica No!")
     risposta = ascolto_risposta_empatico()
     if risposta == "canzone":
         canzone=random.choice(lista_canzoni)
@@ -148,10 +149,10 @@ def scelta(reachy: ReachyMini):
         pausa_vocale(PAUSA_BREVE)
         parla("Spero le sia piaciuta.")
 
-    #elif risposta == "notizie":
-    #    parla("Perfetto! Ora le dico un po' di notizie interssanti!")
-    #    leggi_notizie() 
-	#	## TODO 1 IMPLENETARE chiamata al news.py, leggi notizie deve iniziare l'inteazione da li
+    elif risposta == "notizie":
+        parla("Perfetto! Ora le dico un po' di notizie interessanti!")
+        leggi_notizie() 
+		## TODO 1 IMPLENETARE chiamata al news.py, leggi notizie deve iniziare l'inteazione da li
     elif risposta == "meteo":
         parla("Vuole sapere se deve portare l'ombrello? Ora le dico le previsioni!")
         controlla_meteo()

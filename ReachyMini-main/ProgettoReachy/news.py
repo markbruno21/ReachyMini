@@ -4,6 +4,9 @@ from google_news_api import GoogleNewsClient
 from utilities import clean_html_to_text
 
 ## importato da alessio 
+# --- NUOVI IMPORT ---
+from audio_utils import parla, pausa_vocale
+from microphone_utils import ascolto_risposta
 
 print("[NEWS] news.py (versione vocale) importato correttamente")
 
@@ -96,7 +99,7 @@ def accorcia_titolo(titolo, max_len=80):
     # Taglio bruteforce se non ci sono separatori, preservando l'integrità dell'ultima parola
     return titolo[:max_len].rsplit(' ', 1)[0] + '…'
 
-def _scegli_articolo(articoli, parla, chiedi):
+def _scegli_articolo(articoli):
     """
     Presenta all'utente l'elenco dei titoli disponibili e converte la risposta 
     vocale (numerica o testuale) nell'indice dell'articolo corrispondente.
@@ -114,7 +117,9 @@ def _scegli_articolo(articoli, parla, chiedi):
         mess += f"{i+1}: {titolo_breve}. "
     parla(mess)
     
-    risposta = chiedi("Quale numero preferisci?").lower()
+    # --- MODIFICA QUI: Sdoppiamento di chiedi() ---
+    parla("Quale numero preferisci?")
+    risposta = ascolto_risposta().lower()
     
     # Mappatura fonetica per interpretare correttamente la risposta del microfono
     mappa = {"1":0, "uno":0, "2":1, "due":1, "3":2, "tre":2, "4":3, "quattro":3, "5":4, "cinque":4}
@@ -123,24 +128,30 @@ def _scegli_articolo(articoli, parla, chiedi):
             if idx < len(articoli):
                 return articoli[idx]
                 
-    # Fallback di usabilità: se l'anziano esita o il TTS non capisce, legge comunque la prima notizia
+    # Fallback di usabilità
     parla("Non ho capito bene, ti leggo il primo articolo.")
     return articoli[0]
+    """
+    Presenta all'utente l'elenco dei titoli disponibili e converte la risposta 
+    vocale (numerica o testuale) nell'indice dell'articolo corrispondente.
+    """
+
 
 # ──────────────────────────────────────────────────────────────────────────
 # TODO: modificare la chiamata a questa funzione !!
 # ──────────────────────────────────────────────────────────────────────────
-def leggi_notizie(parla, chiedi, topic=None, when=None):
+def leggi_notizie(topic=None, when=None):
     """
     Interfaccia principale del modulo notizie. Gestisce l'interazione end-to-end:
     richiesta argomento -> download -> filtraggio -> scelta utente -> lettura riassunto.
     """
     print(f"\n[NEWS] ═══ leggi_notizie(topic='{topic}') ═══")
     
-    # Se il main non passa un argomento predefinito, lo richiede direttamente all'utente
+    # --- MODIFICA QUI: Sdoppiamento di chiedi() ---
     if not topic:
-        topic = chiedi("Dimmi di che argomento vuoi le notizie, ad esempio: salute, meteo o eventi locali. ").strip()
-        if not topic:
+        parla("Dimmi di che argomento vuoi le notizie, ad esempio: salute, meteo o eventi locali.")
+        topic = ascolto_risposta().strip()
+        if not topic or topic == "non ho capito":
             topic = "generale"
     
     parla(f"Cerco le ultime notizie su {topic}.")
@@ -155,7 +166,7 @@ def leggi_notizie(parla, chiedi, topic=None, when=None):
     # 2. Scrematura semantica degli articoli basata sul dizionario locale
     articoli = _filtra_per_argomento(articoli, topic)
     
-    # 3. Fallback: se il filtro è troppo stringente e svuota la lista, recupera le top news nazionali
+    # 3. Fallback: se il filtro è troppo stringente e svuota la lista
     if not articoli:
         parla("Non ci sono articoli specifici. Ti leggo i titoli principali della giornata.")
         articoli = _cerca_notizie("", max_results=5, language="it", country="IT")
@@ -163,13 +174,13 @@ def leggi_notizie(parla, chiedi, topic=None, when=None):
             parla("Nessuna notizia disponibile al momento.")
             return
     
-    # 4. Output di tracciamento dei titoli sul log di debug a schermo
+    # 4. Output di tracciamento
     for i, a in enumerate(articoli[:5]):
         titolo = html.unescape(a.get("title", "Titolo mancante"))
         print(f"[NEWS] {i+1}. {titolo}")
     
-    # 5. Avvio della procedura interattiva di scelta dell'articolo
-    scelto = _scegli_articolo(articoli, parla, chiedi)
+    # --- MODIFICA QUI: Aggiornata la chiamata senza parametri ---
+    scelto = _scegli_articolo(articoli)
     if not scelto:
         parla("Non ho potuto selezionare nessun articolo.")
         return
@@ -177,17 +188,14 @@ def leggi_notizie(parla, chiedi, topic=None, when=None):
     # 6. Estrazione dei metadati editoriali
     titolo_pulito = html.unescape(scelto.get("title", "Titolo mancante"))
     fonte = scelto.get("source") or scelto.get("source_name") or scelto.get("publisher") or "fonte sconosciuta"
-    data = scelto.get("published") or scelto.get("published_date") or "data non specificata"
     
-    # Estrazione e pulizia del riassunto (Redundancy bug risolto qui)
     riassunto_breve = _estrai_riassunto_breve(scelto, max_frasi=2, max_caratteri=350)
     
-    # Controllo di ridondanza: evita di ripetere il titolo se il sommario coincide con esso
     if (len(riassunto_breve) < 20 or 
         riassunto_breve.lower().startswith(titolo_pulito.lower()[:30])):
         riassunto_breve = ""
     
-    # 7. Generazione del testo finale e attivazione del TTS (Missing call bug risolto qui)
+    # 7. Generazione del testo finale
     testo_voce = f"Ecco l'articolo scelto. {titolo_pulito}. "
     testo_voce += f"Fonte: {fonte}. "
     if riassunto_breve:
@@ -195,7 +203,6 @@ def leggi_notizie(parla, chiedi, topic=None, when=None):
         
     parla(testo_voce)
     print("[NEWS] ✓ leggi_notizie completato")
-
 # ──────────────────────────────────────────────────────────────────────────
 # TEST STANDALONE
 # ──────────────────────────────────────────────────────────────────────────
@@ -208,4 +215,4 @@ if __name__ == "__main__":
     
     topic_test = input("Argomento (invio per generico): ").strip() or None
     when_test = input("Periodo (es. 24h, 7d) invio per default: ").strip() or None
-    leggi_notizie(parla_test, chiedi_test, topic=topic_test, when=when_test)
+    leggi_notizie()

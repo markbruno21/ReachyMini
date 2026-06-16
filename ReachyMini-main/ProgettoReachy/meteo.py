@@ -73,7 +73,7 @@ def cerca_citta(nome):
         return []
 
 # ─── DISAMBIGUAZIONE CITTÀ ────────────────────────────────────────────────────
-def scegli_citta(risultati, citta_richiesta, parla, chiedi):
+def scegli_citta(risultati, citta_richiesta):
     """
     Risolve casi di omonimia tra città filtrando per nazione e chiedendo 
     eventuali chiarimenti all'utente. Ottimizzata per un target anziano.
@@ -285,4 +285,4 @@ if __name__ == "__main__":
         return input("  [TU] ")
         
     citta = input("Città da testare: ")
-    controlla_meteo(citta, parla_test, chiedi_test)
+    controlla_meteo()
