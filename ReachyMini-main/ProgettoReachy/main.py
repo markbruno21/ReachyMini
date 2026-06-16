@@ -7,6 +7,7 @@ from emozioni import rileva_emozione, gestisci_emozione
 from audio_utils import parla, pausa_vocale
 from reachy_mini_mock import ReachyMini
 from microphone_utils import ascolto_risposta, ascolto_risposta_empatico
+from puliziatesto import estrai_nome
 
 VELOCITA_PARLATA = 1.4           # Secondi di pausa dopo ogni battuta. Rispettare i tempi di elaborazione di un utente anziano senza risultare incalzante
 PAUSA_BREVE = 0.8                # Pausa breve tra azioni multimodali, per lasciare il tempo necessario per rispondere senza stress
@@ -99,6 +100,7 @@ def presentazione(reachy: ReachyMini):
             break
         elif risposta == "no":
             parla("Ok, allora parliamo di altro")
+            break
         else:
             fraintendimento = fraintendimento+1
             non_capisco(reachy, "risposta", fraintendimento)
@@ -108,8 +110,8 @@ def presentazione(reachy: ReachyMini):
     pausa_vocale(PAUSA_LUNGA)
     
 	## 2) funzione che estrare il nome proprio di persona dalla stringa trascritta 
-    
-    nome = ascolto_risposta_empatico()
+    risposta = ascolto_risposta_empatico()
+    nome = estrai_nome(risposta)
     nomi_pazienti.append(nome)
 
     parla(f"Piacere di conoscerla {nome}")
