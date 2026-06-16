@@ -5,6 +5,7 @@ import pygame
 import speech_recognition as sr
 from dialetto import ottieni_regione, DIALETTI
 from jukebox import lista_canzoni
+from emozioni import rileva_emozione
 
 
 VELOCITA_PARLATA = 1.4           # Secondi di pausa dopo ogni battuta. Rispettare i tempi di elaborazione di un utente anziano senza risultare incalzante
@@ -47,8 +48,13 @@ def ascolto_risposta() -> str:
             return "Non ho capito"
         except sr.RequestError:
             return "Errore nel sistema"
-    #gestire lingue straniere
-
+        
+def ascolto_risposta_empatico():
+    risposta = ascolto_risposta()
+    rileva_emozione(risposta)
+    return risposta
+    
+    
 def non_capisco(reachy: ReachyMini, contesto: str = "risposta", fraintendimento: int = 0) -> str:
     match fraintendimento:
         case 1:
@@ -136,8 +142,7 @@ def scelta(reachy: ReachyMini):
             pygame.mixer.music.play()
             engine.pause(PAUSA_BREVE)
             engine.say("Spero le sia piaciuta.")
-            
-            #fai partire la musica in base al cantante scelto 
+
         case 2:
             risposta == "Notizie"
             engine.say("Cosa le interessa? Il meteo, l'attualità o lo sport?")
@@ -149,9 +154,12 @@ def scelta(reachy: ReachyMini):
     return 
 
 def saluto_finale(reachy: ReachyMini)
-    engine.say("è stato bello questo tempo speso insieme")
+    engine.say("È stato bello questo tempo speso insieme")
     engine.pause(PAUSA_BREVE)
     engine.say ("ci rivediamo nei corridoi")
+    reachy.arm.right.raise_up(30)
+    reachy.arm.right.wave()
+    reachy.arm.right.lower()
     #movimento mano
 
 
@@ -164,6 +172,7 @@ def main(reachy: ReachyMini):
     engine.pause(PAUSA_BREVE)
 
     scelta(reachy) #notizie o musica 
+    engine.pause(PAUSA_BREVE)
 
 
     saluto_finale(reachy)

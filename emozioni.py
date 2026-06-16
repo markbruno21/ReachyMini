@@ -47,24 +47,27 @@ KEYWORD_EMOZIONI = {
     ],
 }
 
-def rileva_emozione(testo):
-    testo_norm = testo.strip().lower()
- 
-    punteggi = {}
-    for emozione, keywords in KEYWORD_EMOZIONI.items():
-        
-        punteggio = 0
-        for kw in keywords:
-        if kw in testo_norm:
-        punteggio += 1
+emozioni_negative = ["triste", "arrabbiato", "impaurito", "disgustato"]
+emozioni_spiacevoli = ["nostalgico", "confuso"]
 
-        if punteggio > 0:
-            punteggi[emozione] = punteggio
- 
-    if not punteggi:
+
+def rileva_emozione(risposta):
+    testo = risposta
+    punteggi = {emozione: 0 for emozione in dizionario_emozioni}  # inizializza tutte le emozioni a 0
+    
+    for emozione, parole in KEYWORD_EMOZIONI.items():
+        for parola in parole:
+            if parola in testo:
+                punteggi[emozione] += 1
+    
+    # prende l'emozione col punteggio più alto
+    emozione_principale = max(punteggi, key=lambda x: punteggi[x])
+    
+    # se tutti i punteggi sono 0 non ha rilevato nulla
+    if punteggi[emozione_principale] == 0:
         return None
- 
-    return max(punteggi, key=lambda e: punteggi[e])
+    
+    return emozione_principale
     
 
 def gestisci_emozione(emozione, reachy):
