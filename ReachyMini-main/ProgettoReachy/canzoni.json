@@ -1,20 +1,21 @@
-[
+
+  [
   {
     "id": 1,
-    "titolo": "Figli Delle Stelle",
+    "titolo": "figli delle stelle",
     "artista": "Alan Sorrenti ",
     "file_path": "canzoni/Alan Sorrenti - Figli Delle Stelle.mp3"
   },
   {
     "id": 2,
-    "titolo": "Il gatto e la volpe",
+    "titolo": "il gatto e la volpe",
     "artista": "Edoardo Bennato",
     "file_path": "canzoni/Edoardo Bennato - Il gatto e la volpe.mp3"
 
   },
   {
     "id": 3,
-    "titolo": "La donna cannone",
+    "titolo": "la donna cannone",
     "artista": "Francesco De Gregori",
     "file_path": "canzoni/Francesco De Gregori - La donna cannone.mp3"
 },
@@ -26,7 +27,7 @@
 },
 {
     "id": 5,
-    "titolo": "Fatti mandare dalla mamma",
+    "titolo": "fatti mandare dalla mamma",
     "artista": "Gianni Morandi",
     "file_path": "canzoni/Gianni Morandi - Fatti mandare dalla mamma.mp3"
 },
@@ -38,57 +39,56 @@
 },
 {
     "id": 7,
-    "titolo": "Il cielo in una stanza",
+    "titolo": "il cielo in una stanza",
     "artista": "Gino Paoli",
     "file_path": "canzoni/Gino Paoli - Il cielo in una stanza.mp3"
 },
 {
     "id": 8,
-    "titolo": "Maledetta primavera",
+    "titolo": "maledetta primavera",
     "artista": "Loretta Goggi",
     "file_path": "canzoni/Loretta Goggi - Maledetta primavera.mp3"
 },
 {
     "id": 9,
-    "titolo": "I giardini di marzo",
+    "titolo": "i giardini di marzo",
     "artista": "Lucio Battisti",
     "file_path": "canzoni/Lucio Battisti - I giardini di marzo.mp3"
 },
 {
     "id": 10,
-    "titolo": "Perdere l'amore",
+    "titolo": "perdere l'amore",
     "artista": "Massimo Ranieri",
     "file_path": "canzoni/Massimo Ranieri - Perdere l'amore.mp3"
 },
 {
     "id": 11,
-    "titolo": "Mi sei scoppiato dentro al cuore",
+    "titolo": "mi sei scoppiato dentro al cuore",
     "artista": "Mina",
     "file_path": "canzoni/Mina - Mi sei scoppiato dentro al cuore.mp3"
 },
 {
     "id": 12,
-    "titolo": "Amore Disperato",
+    "titolo": "amore Disperato",
     "artista": "Nada",
     "file_path": "canzoni/Nada - Amore Disperato.mp3"
 },
 {
     "id": 13,
-    "titolo": "A far lamore comincia tu",
+    "titolo": "a far l'amore comincia tu",
     "artista": "Raffaella Carrà",
     "file_path": "canzoni/Raffaella Carrà - A far lamore comincia tu.mp3"
 },
 {
     "id": 14,
-    "titolo": "A mano a mano",
+    "titolo": "a mano a mano",
     "artista": "Rino Gaetano",
     "file_path": "canzoni/Rino Gaetano - A mano a mano.mp3"
 },
 {
     "id": 15,
-    "titolo": "Gloria",
+    "titolo": "gloria",
     "artista": "Umberto Tozzi",
     "file_path": "canzoni/Umberto Tozzi - Gloria.mp3"
 }
-
 ]

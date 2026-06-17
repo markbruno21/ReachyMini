@@ -1,4 +1,5 @@
 import random
+import time
 import speech_recognition as sr
 from audio_utils import parla, pausa_vocale
 import pygame 
@@ -34,25 +35,18 @@ canzoni_giocate = []
 canzone_corrente = None
 gioco_terminato = False
 
-            
-
 pygame.mixer.init()
-
-
 
 def inizializza_gioco():
     inizializza_robot()
-    # ascolto_risposta()
-
-    
 
     #stato gioco
     stato_gioco = {
-    "giocatori_punteggi" : {},
-    "playlist" : lista_canzoni,
-    "canzoni_giocate" : [],
-    "canzone_corrente" : None,
-    "gioco_terminato" : False,
+        "giocatori_punteggi": {},
+        "playlist": lista_canzoni,
+        "canzoni_giocate": [],
+        "canzone_corrente": None,
+        "gioco_terminato": False,
     }
 
     return stato_gioco
@@ -61,7 +55,7 @@ def inizializza_gioco():
 #----------------------FUNZIONI PER JUKBOXE----------------------
 def presentazione_gioco(reachy: ReachyMini):
     parla("Benvenuti al gioco del Jukebox!")
-    pausa_vocale(PAUSA_BREVE)
+    """pausa_vocale(PAUSA_BREVE)
     parla("Io sono Reachy, e insieme all'animatrice, vi faremo ascoltare delle canzoni.")
     pausa_vocale(PAUSA_BREVE)
     parla("Il gioco è semplice: quando pensate di sapere il titolo della canzone alzate la mano.")
@@ -70,22 +64,25 @@ def presentazione_gioco(reachy: ReachyMini):
     pausa_vocale(PAUSA_BREVE)
     parla("Se la risposta è corretta, guadagnerete un punto e passeremo alla canzone successiva.")
     pausa_vocale(PAUSA_BREVE)
-    parla("Altrimenti se è sbagliata non vi preoccupate, la musica ricomincierà e potrete riprovare!")
+    parla("Altrimenti se è sbagliata non vi preoccupate, la musica ricomincerà e potrete riprovare!")
     pausa_vocale(PAUSA_BREVE)
     parla("Dopo 15 canzoni, il gioco terminerà e vedremo chi è il vincitore!")
-    pausa_vocale(PAUSA_BREVE)
+    pausa_vocale(PAUSA_BREVE)"""
 
 def inizializza_giocatori(stato_gioco):
     parla("Prima di iniziare, registriamo i nomi dei giocatori.")
     pausa_vocale(PAUSA_BREVE)
     parla("Animatrice, per favore, dimmi un nome alla volta. Quando hai finito, dì 'fine'.")
-   
+    
+    ultimo_nome_registrato = None
+
     while True:
         nome_giocatore = ascolto_risposta()
+       
         if nome_giocatore in ["fine", "terminato", "stop", "basta", "finito"]:
             parla("Grazie! Ora siamo pronti per iniziare il gioco.")
             break
-        elif nome_giocatore in ["no","no ho sbagliato", "sbagliato", "non", "errore", "cambia"]:
+        elif nome_giocatore in ["no", "no ho sbagliato", "sbagliato", "non", "errore", "cambia"]:
             if ultimo_nome_registrato is not None:
                 del stato_gioco["giocatori_punteggi"][ultimo_nome_registrato]
                 parla(f"Ok, ho rimosso {ultimo_nome_registrato}. Mi ripeti il nome?")
@@ -94,7 +91,7 @@ def inizializza_giocatori(stato_gioco):
                 parla("Non ho ancora registrato nessun nome da correggere. Dimmi il nome.")
             continue
         else:
-            stato_gioco["giocatori_punteggi"][nome_giocatore] = 0 #inizializza punteggio a 0 per ogni nome
+            stato_gioco["giocatori_punteggi"][nome_giocatore] = 0
             ultimo_nome_registrato = nome_giocatore
             parla(f"{nome_giocatore} registrato!")
 
@@ -106,102 +103,103 @@ def estrai_canzone(stato_gioco):
         if canzone not in stato_gioco["canzoni_giocate"]:
             canzoni_disponibili.append(canzone)
     if not canzoni_disponibili:
-        return None  # controllo aggiuntivo ->Tutte le canzoni sono state giocate
-    canzone_estratta = random.choice(canzoni_disponibili)
-    stato_gioco["canzone_corrente"] = canzone_estratta
-    stato_gioco["canzoni_giocate"].append(canzone_estratta)
-    return canzone_estratta
+        return None
+    canzone_corrente = random.choice(canzoni_disponibili)
+    stato_gioco["canzone_corrente"] = canzone_corrente
+    return canzone_corrente
 
-#classifica_finale[0]      → ("Mario":5)   intera tupla
-#classifica_finale[0][0]   → "Mario"         nome
-#classifica_finale[0][1]   → 5               punteggio
 def fine_gioco(stato_gioco):
     stato_gioco["gioco_terminato"] = True
-    classifica_finale = sorted(stato_gioco["giocatori_punteggi"].items(),key=lambda x: x[1], reverse=True)
-    punteggio_max=  0 
-    punteggio_max= classifica_finale[0][1] #per prendere solo il punteggio 
-    #ciclo per vedere se ci sono pareggi 
-    if punteggio_max != classifica_finale[1][1] and punteggio_max>0:
+    classifica_finale = sorted(stato_gioco["giocatori_punteggi"].items(), key=lambda x: x[1], reverse=True)
+    punteggio_max = classifica_finale[0][1]
+    
+    if punteggio_max != classifica_finale[1][1] and punteggio_max > 0:
         nome_vincitore, punteggio_vincitore = classifica_finale[0]
         parla("Il vincitore è ...")
         pausa_vocale(PAUSA_LUNGA)
         parla(f"{nome_vincitore} con {punteggio_vincitore} punti! Complimenti!")
 
-    elif punteggio_max == classifica_finale[1][1] and punteggio_max>0:
-        vincitori=[]
-        i=0
-        while i<len(classifica_finale) and punteggio_max==classifica_finale[i][1]:
+    elif punteggio_max == classifica_finale[1][1] and punteggio_max > 0:
+        vincitori = []
+        i = 0
+        while i < len(classifica_finale) and punteggio_max == classifica_finale[i][1]:
             vincitori.append(classifica_finale[i][0])
-            i+=1
+            i += 1
         parla("Aspettate, abbiamo un pareggio!")
-        pausa_vocale(PAUSA_BREVE)
-        parla("I vincitori sono...")
         pausa_vocale(PAUSA_LUNGA)
         parla("I vincitori sono:")
         for nome in vincitori:
             pausa_vocale(PAUSA_BREVE)
             parla(f"{nome} con {punteggio_max} punti!")
-    else : parla("Non ci sono vincitori siccome nessuno ha realizzato almeno un punto.")
-    #saluti finali        
+    else:
+        parla("Non ci sono vincitori siccome nessuno ha realizzato almeno un punto.")
+            
     pausa_vocale(PAUSA_BREVE)
     parla("Grazie a tutti per aver partecipato! È stato bello giocare con voi!")
 
+def riprendi_musica(canzone_corrente, tempo_accumulato_ms):
+    # Converte i millisecondi accumulati in secondi (richiesti da play)
+    secondi_inizio = tempo_accumulato_ms / 1000.0
+    # Ricarica e fa il play partendo dal punto esatto
+    pygame.mixer.music.load(canzone_corrente["file_path"])
+    pygame.mixer.music.play(start=secondi_inizio)
 
 #----------------------COMANDI ANIMATRICE----------------------
-#stop al gioco in qualsiasi momento nel caso di emergenza
 def start_gioco(reachy, comando):
-    #"inizia il gioco" 
     parla("Se siamo tutti pronti, animatrice dimmi 'pronti via'!")
     pausa_vocale(PAUSA_BREVE)
     risposta = ascolto_risposta()
-    if risposta == " pronti via":
-        parla("Perfetto! Iniziamo il gioco!")              #condizione per gestire il no mglio
-        #inizia il gioco
-        return
+    if risposta == "pronti via":
+        parla("Perfetto! Iniziamo il gioco!")
     else:
         parla("Non ho capito, ripetilo per favore.")
         start_gioco(reachy, comando)
 
-def stop_gioco(stato_gioco):
-    #"interrompi il gioco" in caso di emergenzaa 
+def stop_gioco(stato_gioco, canzone_corrente, tempo_accumulato):
+    """
+    Interrompe il gioco in caso di emergenza.
+    tempo_inizio_ref: lista con un elemento [time.time()] per poterlo modificare
+    """
     pygame.mixer.music.pause()
     parla("Il gioco è stato momentaneamente interrotto")
     pausa_vocale(PAUSA_LUNGA)
-    parla("Animatrice, vuoi riprendere il gioco? dimmi si o no")
+    parla("Animatrice, vuoi riprendere il gioco? dimmi riprendi o interrompi")
     risposta = ascolto_risposta()
-    if risposta == "si":
+    if risposta == "riprendi":
         parla("Perfetto! Riprendiamo il gioco!")
-        pygame.mixer.music.unpause()
+        riprendi_musica(canzone_corrente, tempo_accumulato)
         return True
-    elif risposta == "no":
-        parla("Va bene, il gioco termina qui. Grazie a tutti per aver partecipato! È stato bello giocare con voi!")
+    elif risposta == "interrompi":
+        parla("Va bene, il gioco termina qui.")
         stato_gioco["gioco_terminato"] = True
         return False
     else:
         parla("Non ho capito, ripetilo per favore.")
-    
-     
-#ferma la musica (per far dire titolo della canzone)
-def ferma_musica(stato_gioco, canzone_corrente):
+        # Se non capisce, riprova
+        return stop_gioco(stato_gioco, canzone_corrente, tempo_accumulato)
+
+def ferma_musica(stato_gioco, canzone_corrente, tempo_accumulato):
+    """
+    Ferma la musica per far dire il titolo della canzone.
+    tempo_inizio_ref: lista con un elemento [time.time()] per poterlo modificare
+    """
     pygame.mixer.music.pause()
     parla("Animatrice, per favore, chiedi al giocatore il titolo della canzone.")
     titolo_risposta = ascolto_risposta()
-    #se risposta giusta -> assegna punto 
+    
     if titolo_risposta == canzone_corrente["titolo"]:
         pygame.mixer.music.stop()
         parla("Risposta corretta! A chi assegno il punto?")
-        giocatore=ascolto_risposta()
+        giocatore = ascolto_risposta()
         stato_gioco["giocatori_punteggi"][giocatore] += 1
         parla(f"Perfetto! {giocatore} ha guadagnato un punto!")
+        stato_gioco["canzoni_giocate"].append(canzone_corrente)
         return True
-    #se risposta sbagliata -> nessun punto -> riprende la stessa canzone
-    elif titolo_risposta != canzone_corrente["titolo"]:
+    else:
         parla(random.choice(frasi_incoraggiamento))
         pausa_vocale(PAUSA_BREVE)
-        pygame.mixer.music.unpause()
+        riprendi_musica(canzone_corrente, tempo_accumulato)
         return False
-
-
 
 
 #----------------------FLUSSO DEL GIOCO----------------------
@@ -211,7 +209,7 @@ def jukebox(reachy: ReachyMini, comando: str):
     inizializza_giocatori(stato_gioco)
     start_gioco(reachy, "via")
 
-    while len(stato_gioco["canzoni_giocate"]) < 15:
+    while len(stato_gioco["canzoni_giocate"]) < 4:
         canzone_corrente = estrai_canzone(stato_gioco)
        
         if canzone_corrente is None:
@@ -221,51 +219,56 @@ def jukebox(reachy: ReachyMini, comando: str):
         pygame.mixer.music.load(canzone_corrente["file_path"])
         pygame.mixer.music.play()
 
-        #aspetta che animatrice ferma la musica
+        # VARIABILI LOCALI ALLA CANZONE — risolvono UnboundLocalError
+        indizio_dato = False
+        tempo_accumulato=0
+
         while True:
+            tempo_corrente_sessione = pygame.mixer.music.get_pos()
+            if tempo_corrente_sessione == -1: 
+                tempo_corrente_sessione = 0
+
+            tempo_totale_canzone = tempo_accumulato + tempo_corrente_sessione            
             comando = ascolto_risposta()
+            
             if comando == "ferma la musica":
-                controllo_risposta = ferma_musica(stato_gioco, canzone_corrente)
-                if controllo_risposta == True: #se risposta corretta -> sorteggia altra canzone 
-                    break #riprende da riga 182 
-                elif controllo_risposta == False: #se risposta errata -> nessun punto -> riprende la stessa canzone
+                tempo_accumulato=tempo_totale_canzone
+                controllo_risposta = ferma_musica(stato_gioco, canzone_corrente, tempo_accumulato)
+                if controllo_risposta == True:
+                    break
+                else:
                     continue
 
             if comando == "interrompi il gioco":
-                controllo_risposta=stop_gioco(stato_gioco, comando)
-                if controllo_risposta == True: #gioco è stato interrotto e riprende
+                tempo_accumulato=tempo_totale_canzone
+                controllo_risposta = stop_gioco(stato_gioco, canzone_corrente, tempo_accumulato)
+                if controllo_risposta == True:
                     continue
-                elif controllo_risposta == False: #gioco è stato interrotto e termina
+                else:
                     fine_gioco(stato_gioco)
-                    break
+                    return
 
-            #dare indizio se trascorso piu di 1 minuto senza risposte
-            tempo_trascorso = pygame.mixer.music.get_pos()
-            if tempo_trascorso > 60000: #1 minuto
-                pygame.mixer.music.pause() #pausa la musica per dare l'indizio
+            # dare indizio dopo 30 secondi
+            if tempo_totale_canzone > 30000 and not indizio_dato:
+                tempo_accumulato=tempo_totale_canzone
+                pygame.mixer.music.pause()
                 parla(f"Indizio: il cantante di questa canzone è {canzone_corrente['artista']}")
                 pausa_vocale(PAUSA_BREVE)
                 parla("Ora riparte la musica!")
-                pygame.mixer.music.unpause() #riprende la musica dopo l'indizio
-            #aspettare altri 30 secondi -> se nessuno indovina -> dire il titolo e cambiare canzone
-            while True:
-                if comando == "ferma la musica":
-                    controllo_risposta = ferma_musica(stato_gioco, canzone_corrente)
-                    if controllo_risposta == True: #se risposta corretta -> sorteggia altra canzone 
-                        break #riprende da riga 182 
-                    elif controllo_risposta == False: #se risposta errata -> nessun punto -> riprende la stessa canzone
-                        continue
-                if tempo_trascorso > 90000: #1 minuto + 30 secondi
-                    pygame.mixer.music.stop() #ferma la musica
-                    parla("Mannaggia, questa era difficile!")
-                    pausa_vocale(PAUSA_BREVE)
-                    parla(f"Il titolo di questa canzone è {canzone_corrente['titolo']}. Ascoltiamo un'altra canzone!")
-                    break #riprende da riga 182
+                riprendi_musica(canzone_corrente, tempo_accumulato)
+                indizio_dato = True
+            
+            # skip dopo 60 secondi totali
+            if tempo_totale_canzone > 60000 and indizio_dato:
+                pygame.mixer.music.stop()
+                parla("Mannaggia, questa era difficile!")
+                pausa_vocale(PAUSA_BREVE)
+                parla(f"Il titolo di questa canzone è {canzone_corrente['titolo']}. Ascoltiamo un'altra canzone!")
+                stato_gioco["canzoni_giocate"].append(canzone_corrente)
+                break
     
     fine_gioco(stato_gioco)
             
-#----------------------TEST / MAIN----------------------
-#----------------------TEST / MAIN----------------------
 #----------------------TEST / MAIN----------------------
 if __name__ == "__main__":
     reachy = ReachyMini()
