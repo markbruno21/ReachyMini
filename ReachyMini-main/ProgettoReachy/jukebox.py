@@ -2,7 +2,7 @@ import random
 import speech_recognition as sr
 from audio_utils import parla, pausa_vocale
 import pygame 
-from main import ReachyMini, PAUSA_BREVE, PAUSA_LUNGA, engine, ascolto_risposta, inizializza_robot, lista_canzoni
+from main import ReachyMini, PAUSA_BREVE, PAUSA_LUNGA, ascolto_risposta, inizializza_robot, lista_canzoni
 
 frasi_incoraggiamento = [
     "Quasi! Ma non è la risposta corretta. Riproviamo!",
@@ -41,8 +41,6 @@ pygame.mixer.init()
 def inizializza_gioco():
     inizializza_robot()
     ascolto_risposta()
-
-    
 
     #stato gioco
     stato_gioco = {
@@ -84,10 +82,16 @@ def inizializza_giocatori(stato_gioco):
             parla("Grazie! Ora siamo pronti per iniziare il gioco.")
             break
         elif nome_giocatore in ["no", "sbagliato", "non", "errore", "cambia"]:
-            parla ("Mi ripeti il nome?")
-            break
+            if ultimo_nome_registrato is not None:
+                del stato_gioco["giocatori_punteggi"][ultimo_nome_registrato]
+                parla(f"Ok, ho rimosso {ultimo_nome_registrato}. Mi ripeti il nome?")
+                ultimo_nome_registrato = None
+            else:
+                parla("Non ho ancora registrato nessun nome da correggere. Dimmi il nome.")
+            continue  
         else:
             stato_gioco["giocatori_punteggi"][nome_giocatore] = 0 #inizializza punteggio a 0 per ogni nome    
+            ultimo_nome_registrato = nome_giocatore
             parla(f"{nome_giocatore} registrato!")
 
     return stato_gioco["giocatori_punteggi"]
@@ -129,7 +133,6 @@ def fine_gioco(stato_gioco):
         pausa_vocale(PAUSA_BREVE)
         parla("I vincitori sono...")
         pausa_vocale(PAUSA_LUNGA)
-        parla("I vincitori sono:")
         for nome in vincitori:
             pausa_vocale(PAUSA_BREVE)
             parla(f"{nome} con {punteggio_max} punti!")
@@ -143,11 +146,11 @@ def fine_gioco(stato_gioco):
 #stop al gioco in qualsiasi momento nel caso di emergenza
 def start_gioco(reachy, comando):
     #"inizia il gioco" 
-    parla("Se siamo tutti ponti, animatrice dimmi 'via'!")
+    parla("Se siamo tutti ponti, animatrice dimmi 'pronti via'!")
     pausa_vocale(PAUSA_BREVE)
     risposta = ascolto_risposta()
-    if risposta == "via":
-        parla("Perfetto! Iniziamo il gioco!")              #condizione per gestire il no mglio
+    if risposta == "pronti via":
+        parla("Perfetto! Iniziamo il gioco!") 
         #inizia il gioco
     else:
         parla("Non ho capito, ripetilo per favore.")
