@@ -83,6 +83,9 @@ def inizializza_giocatori(stato_gioco):
         if nome_giocatore in ["fine", "terminato", "stop", "basta", "finito"]:
             parla("Grazie! Ora siamo pronti per iniziare il gioco.")
             break
+        elif nome_giocatore in ["no", "sbagliato", "non", "errore", "cambia"]:
+            parla ("Mi ripeti il nome?")
+            break
         else:
             stato_gioco["giocatori_punteggi"][nome_giocatore] = 0 #inizializza punteggio a 0 per ogni nome    
             parla(f"{nome_giocatore} registrato!")

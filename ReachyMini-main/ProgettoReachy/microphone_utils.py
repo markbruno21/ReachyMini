@@ -36,8 +36,8 @@ def suona_beep(frequenza=880, durata_ms=200, volume=0.5):
 def ascolto_risposta() -> str:
     """Ascolta il microfono, tenta con Google e ripiega su Vosk in caso di errore."""
     with sr.Microphone() as source:
-        print("[MIC] Calibrazione rumore ambientale (0.5s)...")
-        RECOGNIZER.adjust_for_ambient_noise(source, duration=0.5)
+        print("[MIC] Calibrazione rumore ambientale (0.2s)...")
+        RECOGNIZER.adjust_for_ambient_noise(source, duration=0.2)
         # fai partire bip
         suona_beep()
         print("[MIC] In ascolto...")
