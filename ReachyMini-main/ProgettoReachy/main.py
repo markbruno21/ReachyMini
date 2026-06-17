@@ -87,9 +87,6 @@ def presentazione(reachy: ReachyMini):
     risposta = ascolto_risposta()
     scelta= interpreta_si_no(risposta)
     
-	## 1) funzione che capisce se si o no dalla stringa trascritta...
-    ## DONE
-    # risposta = classifica_risposte(risposta)
     while fraintendimento < 3:
         if scelta == "si":
             parla("Mi piace stare in compagnia e adoro chiaccherare.")
@@ -110,8 +107,6 @@ def presentazione(reachy: ReachyMini):
     parla("Lei come si chiama? Risponda con il suo nome")
     pausa_vocale(PAUSA_LUNGA)
     
-	## 2) funzione che estrare il nome proprio di persona dalla stringa trascritta 
-    ## DONE
     risposta = ascolto_risposta_empatico()
     nome = estrai_nome(risposta)
     nomi_pazienti.append(nome)
@@ -122,8 +117,6 @@ def presentazione(reachy: ReachyMini):
     parla("Da che regione viene?")
     pausa_vocale(PAUSA_LUNGA)
     
-	## 3) funzione che estrae la regione italiana dalla stringa
-    ## DONE
     
     luogo = ascolto_risposta_empatico()
     risposta_dialetto=ottieni_regione(luogo)
@@ -157,11 +150,11 @@ def scelta(reachy: ReachyMini):
     elif risposta == "notizie":
         parla("Perfetto! Ora le dico un po' di notizie interessanti!")
         leggi_notizie() 
-		## TODO 1 IMPLENETARE chiamata al news.py, leggi notizie deve iniziare l'inteazione da li
+		
     elif risposta == "meteo":
         parla("Vuole sapere se deve portare l'ombrello? Ora le dico le previsioni!")
         controlla_meteo()
-        ## TODO: 2 IMPLEMENTARE chiamata al meteo.py, controlla meteo deve iniziare linterazione da li
+        
     elif risposta == "no":
         parla("okay, va bene!")
     else: 

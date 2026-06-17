@@ -2,7 +2,9 @@ import random
 import speech_recognition as sr
 from audio_utils import parla, pausa_vocale
 import pygame 
-from main import ReachyMini, PAUSA_BREVE, PAUSA_LUNGA, engine, ascolto_risposta, inizializza_robot, lista_canzoni
+from main import PAUSA_BREVE, PAUSA_LUNGA, inizializza_robot, lista_canzoni
+from reachy_mini_mock import ReachyMini
+from microphone_utils import ascolto_risposta
 
 frasi_incoraggiamento = [
     "Quasi! Ma non è la risposta corretta. Riproviamo!",
@@ -32,7 +34,7 @@ canzoni_giocate = []
 canzone_corrente = None
 gioco_terminato = False
 
-
+            
 
 pygame.mixer.init()
 
@@ -40,7 +42,7 @@ pygame.mixer.init()
 
 def inizializza_gioco():
     inizializza_robot()
-    ascolto_risposta()
+    # ascolto_risposta()
 
     
 
@@ -83,11 +85,17 @@ def inizializza_giocatori(stato_gioco):
         if nome_giocatore in ["fine", "terminato", "stop", "basta", "finito"]:
             parla("Grazie! Ora siamo pronti per iniziare il gioco.")
             break
-        elif nome_giocatore in ["no", "sbagliato", "non", "errore", "cambia"]:
-            parla ("Mi ripeti il nome?")
-            break
+        elif nome_giocatore in ["no","no ho sbagliato", "sbagliato", "non", "errore", "cambia"]:
+            if ultimo_nome_registrato is not None:
+                del stato_gioco["giocatori_punteggi"][ultimo_nome_registrato]
+                parla(f"Ok, ho rimosso {ultimo_nome_registrato}. Mi ripeti il nome?")
+                ultimo_nome_registrato = None
+            else:
+                parla("Non ho ancora registrato nessun nome da correggere. Dimmi il nome.")
+            continue
         else:
-            stato_gioco["giocatori_punteggi"][nome_giocatore] = 0 #inizializza punteggio a 0 per ogni nome    
+            stato_gioco["giocatori_punteggi"][nome_giocatore] = 0 #inizializza punteggio a 0 per ogni nome
+            ultimo_nome_registrato = nome_giocatore
             parla(f"{nome_giocatore} registrato!")
 
     return stato_gioco["giocatori_punteggi"]
@@ -110,16 +118,16 @@ def estrai_canzone(stato_gioco):
 def fine_gioco(stato_gioco):
     stato_gioco["gioco_terminato"] = True
     classifica_finale = sorted(stato_gioco["giocatori_punteggi"].items(),key=lambda x: x[1], reverse=True)
-    punteggio_max=  0
+    punteggio_max=  0 
     punteggio_max= classifica_finale[0][1] #per prendere solo il punteggio 
     #ciclo per vedere se ci sono pareggi 
-    if punteggio_max != classifica_finale[1][1]:
+    if punteggio_max != classifica_finale[1][1] and punteggio_max>0:
         nome_vincitore, punteggio_vincitore = classifica_finale[0]
         parla("Il vincitore è ...")
         pausa_vocale(PAUSA_LUNGA)
         parla(f"{nome_vincitore} con {punteggio_vincitore} punti! Complimenti!")
 
-    elif punteggio_max == classifica_finale[1][1]:
+    elif punteggio_max == classifica_finale[1][1] and punteggio_max>0:
         vincitori=[]
         i=0
         while i<len(classifica_finale) and punteggio_max==classifica_finale[i][1]:
@@ -133,7 +141,7 @@ def fine_gioco(stato_gioco):
         for nome in vincitori:
             pausa_vocale(PAUSA_BREVE)
             parla(f"{nome} con {punteggio_max} punti!")
-
+    else : parla("Non ci sono vincitori siccome nessuno ha realizzato almeno un punto.")
     #saluti finali        
     pausa_vocale(PAUSA_BREVE)
     parla("Grazie a tutti per aver partecipato! È stato bello giocare con voi!")
@@ -143,17 +151,18 @@ def fine_gioco(stato_gioco):
 #stop al gioco in qualsiasi momento nel caso di emergenza
 def start_gioco(reachy, comando):
     #"inizia il gioco" 
-    parla("Se siamo tutti ponti, animatrice dimmi 'via'!")
+    parla("Se siamo tutti pronti, animatrice dimmi 'pronti via'!")
     pausa_vocale(PAUSA_BREVE)
     risposta = ascolto_risposta()
-    if risposta == "via":
+    if risposta == " pronti via":
         parla("Perfetto! Iniziamo il gioco!")              #condizione per gestire il no mglio
         #inizia il gioco
+        return
     else:
         parla("Non ho capito, ripetilo per favore.")
         start_gioco(reachy, comando)
 
-def stop_gioco(stato_gioco, comando):
+def stop_gioco(stato_gioco):
     #"interrompi il gioco" in caso di emergenzaa 
     pygame.mixer.music.pause()
     parla("Il gioco è stato momentaneamente interrotto")
@@ -255,3 +264,9 @@ def jukebox(reachy: ReachyMini, comando: str):
     
     fine_gioco(stato_gioco)
             
+#----------------------TEST / MAIN----------------------
+#----------------------TEST / MAIN----------------------
+#----------------------TEST / MAIN----------------------
+if __name__ == "__main__":
+    reachy = ReachyMini()
+    jukebox(reachy, "")
