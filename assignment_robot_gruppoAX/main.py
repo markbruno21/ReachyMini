@@ -19,6 +19,12 @@ PAUSA_LUNGA = 2.5                # Pausa lunga per lasciare rispondere
 #variabili
 nomi_pazienti=[]
 
+"""
+    Carica la lista delle canzoni da un file JSON.
+    Il file deve contenere un array di oggetti con almeno i campi
+    'titolo', 'artista' e 'file_path'.
+    Restituisce la playlist come lista di dizionari.
+"""
 def carica_playlist(canzoni):
     with open(canzoni, 'r', encoding='utf-8') as file: #r serve per leggere il file, encoding serve per leggere i caratteri speciali
         playlist = json.load(file)
@@ -52,7 +58,13 @@ def controlla_emozione_o_stop(risposta: str, reachy: ReachyMini) -> bool:
             return False
     return True
     
-    
+"""
+    Gestisce i tentativi di recupero quando il robot non capisce l'utente.
+    - Al 1° fraintendimento: chiede gentilmente di ripetere.
+    - Al 2° fraintendimento: spiega il problema e specifica cosa ripetere.
+    - Al 3° fraintendimento: ammette il malfunzionamento e cambia argomento.
+    Restituisce la nuova risposta dell'utente (o None al 3° tentativo).
+"""
 def non_capisco(contesto: str = "risposta", fraintendimento: int = 0) -> str:
     print("DEBUG: funzione non capisco, counter: {fraintendimento}")
     if fraintendimento==1:
@@ -94,7 +106,7 @@ def presentazione(reachy: ReachyMini):
         
         risposta, continua = ascolto_risposta_empatico(reachy)
         if not continua:
-            raise InterrompiFlussoException() 
+            raise InterrompiFlussoException()    #Lancia InterrompiFlussoException se l'utente richiede assistenza umana.
             
         if risposta == "RIPETI":
             continue  
@@ -117,7 +129,7 @@ def presentazione(reachy: ReachyMini):
             parla("Ok, allora parliamo di altro")
             ha_capito = True
         else:
-            fraintendimento += 1
+            fraintendimento += 1   # Risposta non interpretabile: incrementa il contatore e riprova
             if fraintendimento < 3:
         
                 risposta = non_capisco("se vuoi sapere di più su di me", fraintendimento)
@@ -162,7 +174,7 @@ def presentazione(reachy: ReachyMini):
             continue
         
         nome = estrai_nome(risposta)
-        if nome and nome != "non ho capito":
+        if nome and nome != "non ho capito":   # Nome valido: lo salva nella lista globale e saluta l'utente
             nomi_pazienti.append(nome)
             parla(f"Piacere di conoscerla {nome}")
             break
@@ -186,10 +198,22 @@ def presentazione(reachy: ReachyMini):
         if emozione_rilevata and emozione_rilevata != "felice":
             continue  
 
+
+        # Ottieni una risposta personalizzata in base al dialetto della regione
         risposta_dialetto = ottieni_regione(luogo)
         parla(f"{risposta_dialetto}")
         pausa_vocale(PAUSA_BREVE)
         parla("Ho imparato qualche frase in dialetto, anche se sicuramente non ho la giusta pronuncia")
+
+"""
+    Presenta all'utente le tre attività disponibili e gestisce la scelta:
+      - 'canzone'  → riproduce una canzone casuale dalla playlist,
+                     con possibilità di fermarla con comandi vocali
+      - 'notizie'  → legge le ultime notizie
+      - 'meteo'    → fornisce le previsioni meteo
+      - 'no'       → esce dal menu
+"""
+
 
 def scelta(reachy: ReachyMini): 
     # --- DOMANDA 4: Cosa vuoi fare oggi? ---
@@ -200,7 +224,7 @@ def scelta(reachy: ReachyMini):
         
         risposta, continua = ascolto_risposta_empatico(reachy)
         if not continua:
-            raise InterrompiFlussoException() 
+            raise InterrompiFlussoException()    #Lancia InterrompiFlussoException se l'utente richiede assistenza umana.
                 
         if risposta == "RIPETI":
             continue  
@@ -209,13 +233,13 @@ def scelta(reachy: ReachyMini):
         if emozione_rilevata and emozione_rilevata != "felice":
             continue
         
-        if risposta == "canzone":
+        if risposta == "canzone":    # Sceglie una canzone casuale e la riproduce con pygame
             canzone = random.choice(lista_canzoni)
             pygame.mixer.init()
             pygame.mixer.music.load(canzone["file_path"])
             pygame.mixer.music.play()  
             
-            while pygame.mixer.music.get_busy():
+            while pygame.mixer.music.get_busy():    # Ascolta comandi vocali mentre la canzone è in riproduzione
                 comando = ascolto_risposta()
                 if comando in ["stop", "basta", "fermo", "ferma", "fermati", "smetti"]:
                     pygame.mixer.music.stop()

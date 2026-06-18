@@ -54,7 +54,7 @@ KEYWORD_EMOZIONI = {
         "nausea", "mi nausea", "ripugnante", "non lo sopporto",
     ],
 }
-
+# Categorizzazione per la gestione differenziata del feedback empatico
 emozioni_negative = ["triste", "arrabbiato", "impaurito", "disgustato"]
 emozioni_spiacevoli = ["nostalgico", "confuso"]
 
@@ -63,6 +63,8 @@ class InterrompiFlussoException(Exception):
     pass
 
 ####################################################################################        
+
+# Analizza il testo per identificare l'emozione prevalente con lo scoring.
 
 def rileva_emozione(risposta):
     testo = risposta
@@ -83,32 +85,36 @@ def rileva_emozione(risposta):
     return emozione_principale
     
 
-def gestisci_emozione(emozione, reachy):
+def gestisci_emozione(emozione, reachy): #nella funzione non viene utilizzato ma lo lasciamo per utilizzare la funzione spegnimento
     """
     Restituisce:
         - False -> l'utente vuole chiamare l'assistente (STOP interazione)
         - True  -> l'utente non vuole l'assistente (CONTINUA interazione)
     """ 
-    from microphone_utils import ascolto_risposta
+    from microphone_utils import ascolto_risposta #bypassare problema di import circolare
 
-    if emozione in emozioni_negative:
+    if emozione in emozioni_negative: #se emozione negativa (tristezza, rabbia, disgusto, paura)
         parla("Mi dispiace sentirti dire queste parole")
         pausa_vocale(PAUSA_BREVE)
         parla("Vuoi che chiami un assistente che possa aiutarti? Rispondi con 'chiama assistente' o 'no'")
         conferma = ascolto_risposta()
         
+        #se utente vuole assistente --> si interrompe il flusso
+
         if conferma in ["si", "sì", "ok", "va bene", "chiama", "chiama assistente"]:
             parla("Chiamo subito un assistente per te.")
             raise InterrompiFlussoException()  # STOP: chiama assistente
         
-        else:
+        else:  #se non vuole assistente il flusso continua
             parla("Dai, vedrai che andrà meglio")
             return True   # CONTINUA: non serve assistente
 
-    elif emozione in emozioni_spiacevoli:
+    elif emozione in emozioni_spiacevoli: #se emozione spiacevole (nostalgia, confusione)
         parla("Va tutto bene? Rispondi con 'si' o 'no'")
         conferma = ascolto_risposta()
         
+        #se risposta non va bene, facciamo domanda su richiesta assistente
+
         if conferma in ["no", "non sto bene", "male"]:
             parla("Vuoi che chiami un assistente che possa aiutarti? rispondi con 'si' o 'no'")
             conferma = ascolto_risposta()
@@ -120,14 +126,14 @@ def gestisci_emozione(emozione, reachy):
             else:
                 parla("Dai, le cose si sistemeranno")
                 return True   # CONTINUA
-        
+        # se risposta va bene
         else:
             parla("Okay, volevo assicurarmi che stessi bene.")
             pausa_vocale(PAUSA_BREVE)
             return True   # CONTINUA
 
     else:
-        # Emozione "felice" o altre emozioni non problematiche
+        # Emozione "felice"
         parla("È bello vederti felice")
         return True   # CONTINUA
     
