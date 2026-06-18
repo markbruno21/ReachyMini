@@ -137,9 +137,6 @@ def _scegli_articolo(articoli):
     """
 
 
-# ──────────────────────────────────────────────────────────────────────────
-# TODO: modificare la chiamata a questa funzione !!
-# ──────────────────────────────────────────────────────────────────────────
 def leggi_notizie(topic=None, when=None):
     """
     Interfaccia principale del modulo notizie. Gestisce l'interazione end-to-end:

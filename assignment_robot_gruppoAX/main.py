@@ -23,7 +23,7 @@ def carica_playlist(canzoni):
     with open(canzoni, 'r', encoding='utf-8') as file: #r serve per leggere il file, encoding serve per leggere i caratteri speciali
         playlist = json.load(file)
     return playlist
-# lista canzoni
+
 lista_canzoni = carica_playlist("canzoni.json")
 
 #----------------------FUNZIONI ESSENZIALI----------------------
@@ -71,11 +71,7 @@ def non_capisco(contesto: str = "risposta", fraintendimento: int = 0) -> str:
 
 #----------------------FUNZIONI PER L'INTERAZIONE----------------------
 def saluto(reachy: ReachyMini):
-    #il robot deve avvicinarsi e fare un saluto con la mano
-    #reachy.arm.right.raise_up(30)
-    #reachy.arm.right.wave()
-    #reachy.arm.right.lower()
-    print("DEBUG: dentro la funzion del saluto!")
+    print("DEBUG: dentro la funzione del saluto!")
     parla("Ciao, sono Reachy. Come stai?")
 
 
@@ -123,7 +119,7 @@ def presentazione(reachy: ReachyMini):
         else:
             fraintendimento += 1
             if fraintendimento < 3:
-                # CORRETTO: rimosso 'reachy' che sballava i parametri posizionali
+        
                 risposta = non_capisco("se vuoi sapere di più su di me", fraintendimento)
                 
                 # Controllo emozione anche dopo il recupero del "non capisco"
@@ -204,7 +200,7 @@ def scelta(reachy: ReachyMini):
         
         risposta, continua = ascolto_risposta_empatico(reachy)
         if not continua:
-            raise InterrompiFlussoException() # Oppure spegnimento(reachy); return
+            raise InterrompiFlussoException() 
                 
         if risposta == "RIPETI":
             continue  

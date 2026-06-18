@@ -1,4 +1,4 @@
-import re
+
 
 def estrai_nome(testo: str) -> str:
     testo = testo.lower().strip()

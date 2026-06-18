@@ -55,7 +55,7 @@ def inizializza_gioco():
 #----------------------FUNZIONI PER JUKBOXE----------------------
 def presentazione_gioco(reachy: ReachyMini):
     parla("Benvenuti al gioco del Jukebox!")
-    """pausa_vocale(PAUSA_BREVE)
+    pausa_vocale(PAUSA_BREVE)
     parla("Io sono Reachy, e insieme all'animatrice, vi faremo ascoltare delle canzoni.")
     pausa_vocale(PAUSA_BREVE)
     parla("Il gioco è semplice: quando pensate di sapere il titolo della canzone alzate la mano.")
@@ -67,7 +67,7 @@ def presentazione_gioco(reachy: ReachyMini):
     parla("Altrimenti se è sbagliata non vi preoccupate, la musica ricomincerà e potrete riprovare!")
     pausa_vocale(PAUSA_BREVE)
     parla("Dopo 15 canzoni, il gioco terminerà e vedremo chi è il vincitore!")
-    pausa_vocale(PAUSA_BREVE)"""
+    pausa_vocale(PAUSA_BREVE)
 
 def inizializza_giocatori(stato_gioco):
     parla("Prima di iniziare, registriamo i nomi dei giocatori.")
@@ -219,7 +219,7 @@ def jukebox(reachy: ReachyMini, comando: str):
         pygame.mixer.music.load(canzone_corrente["file_path"])
         pygame.mixer.music.play()
 
-        # VARIABILI LOCALI ALLA CANZONE — risolvono UnboundLocalError
+        # VARIABILI LOCALI ALLA CANZONE 
         indizio_dato = False
         tempo_accumulato=0
 

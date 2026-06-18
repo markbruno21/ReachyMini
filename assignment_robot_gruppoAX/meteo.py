@@ -126,9 +126,6 @@ def controlla_meteo():
     parla("Di quale città vuole sapere il meteo?")
     citta = ascolto_risposta()
     
-	#if non citta or citta == "non ho capito":
-    #    parla("Scusi, non ho sentito bene la città. Annulliamo la ricerca per ora.")
-    #    return
 
     # 1. Geocoding
     print(f"[METEO] Step 1: geocoding per '{citta}'...")

@@ -102,6 +102,6 @@ def ascolto_risposta_empatico(reachy: ReachyMini) -> tuple[str, bool]:
         if emozione:
             continua = gestisci_emozione(emozione, reachy)
             if not continua:
-                return "RIPETI", False  # ⛔ STOP: l'utente vuole l'assistente
+                return "RIPETI", False  # STOP: l'utente vuole l'assistente
             
-    return risposta, True  # ✅ CONTINUA: nessun problema emotivo o emozione gestita
+    return risposta, True  # CONTINUA: nessun problema emotivo o emozione gestita

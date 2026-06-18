@@ -89,7 +89,7 @@ def gestisci_emozione(emozione, reachy):
         - False -> l'utente vuole chiamare l'assistente (STOP interazione)
         - True  -> l'utente non vuole l'assistente (CONTINUA interazione)
     """ 
-    from microphone_utils import ascolto_risposta, ascolto_risposta_empatico
+    from microphone_utils import ascolto_risposta
 
     if emozione in emozioni_negative:
         parla("Mi dispiace sentirti dire queste parole")
