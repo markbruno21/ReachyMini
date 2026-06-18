@@ -89,7 +89,7 @@ def gestisci_emozione(emozione, reachy):
         - False -> l'utente vuole chiamare l'assistente (STOP interazione)
         - True  -> l'utente non vuole l'assistente (CONTINUA interazione)
     """ 
-    from microphone_utils import ascolto_risposta, ascolto_risposta_empatico
+    from microphone_utils import ascolto_risposta
 
     if emozione in emozioni_negative:
         parla("Mi dispiace sentirti dire queste parole")
@@ -113,7 +113,7 @@ def gestisci_emozione(emozione, reachy):
             parla("Vuoi che chiami un assistente che possa aiutarti? rispondi con 'si' o 'no'")
             conferma = ascolto_risposta()
             
-            if conferma in ["si", "sì", "ok", "va bene", "chiama", "chiama assistente"]:
+            if conferma in ["si", "sì", "ok", "va bene"]:
                 parla("Chiamo subito un assistente per te.")
                 raise InterrompiFlussoException()  # STOP: chiama assistente
             
