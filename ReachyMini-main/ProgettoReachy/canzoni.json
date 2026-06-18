@@ -1,4 +1,5 @@
-[
+
+  [
   {
     "id": 1,
     "titolo": "figli delle stelle",
@@ -68,7 +69,7 @@
 },
 {
     "id": 12,
-    "titolo": "amore Disperato",
+    "titolo": "amore disperato",
     "artista": "Nada",
     "file_path": "canzoni/Nada - Amore Disperato.mp3"
 },
@@ -90,5 +91,4 @@
     "artista": "Umberto Tozzi",
     "file_path": "canzoni/Umberto Tozzi - Gloria.mp3"
 }
-
 ]

@@ -1,7 +1,10 @@
 #importato da alessio
 from bs4 import BeautifulSoup, Comment
+from audio_utils import parla
+from reachy_mini_mock import ReachyMini
 import re
 import html
+
 
 def clean_html_to_text(html_blob, max_chars=800):
     """
@@ -59,3 +62,11 @@ def clean_html_to_text(html_blob, max_chars=800):
         text = cut + "…"
 
     return text
+
+
+def spegnimento(reachy: ReachyMini):
+   
+    parla("Avvio procedura di spegnimento")
+    reachy.turn_off()
+    print("✓  Robot disattivato.\n")
+    return reachy

@@ -5,6 +5,7 @@ import pygame
 import speech_recognition as sr
 from vosk import Model, KaldiRecognizer
 from emozioni import rileva_emozione, gestisci_emozione
+from reachy_mini_mock import ReachyMini
 
 # Configurazione globale
 MODEL_PATH = "model_it"
@@ -83,8 +84,15 @@ def ascolto_risposta() -> str:
     return "non ho capito"
 
 
-def ascolto_risposta_empatico() -> str:
-    """Esegue l'ascolto e analizza l'emozione della risposta."""
+def ascolto_risposta_empatico(reachy: ReachyMini) -> tuple[str, bool]:
+    """
+    Esegue l'ascolto e analizza l'emozione della risposta.
+    
+    Returns:
+        tuple: (risposta_testo, continua_interazione)
+               - risposta_testo: il testo trascritto
+               - continua_interazione: True se va tutto bene (ripete la domanda), False se STOP (assistente chiamato)
+    """
     risposta = ascolto_risposta()
     
     # Processa le emozioni solo se c'è una risposta valida
@@ -92,6 +100,8 @@ def ascolto_risposta_empatico() -> str:
         print(f"[EMOZIONI] Analisi per: '{risposta}'")
         emozione = rileva_emozione(risposta)
         if emozione:
-            gestisci_emozione(emozione)
+            continua = gestisci_emozione(emozione, reachy)
+            if not continua:
+                return "RIPETI", False  # ⛔ STOP: l'utente vuole l'assistente
             
-    return risposta
+    return risposta, True  # ✅ CONTINUA: nessun problema emotivo o emozione gestita
