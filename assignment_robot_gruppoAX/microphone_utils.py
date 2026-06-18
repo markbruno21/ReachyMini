@@ -62,7 +62,7 @@ def ascolto_risposta() -> str:
     except sr.RequestError as e:
         print(f"[STT-GOOGLE] ✗ Errore di rete/API: {e}")
 
-    # 2. Fallback Locale (Vosk)
+    # 2. Fallback Locale (Vosk) -> modello offline per trascrivere il tetso nel caso API di google non funzionassero
     if MODELLO_VOSK:
         print("[STT-VOSK] Avvio fallback offline...")
         try:
@@ -83,7 +83,7 @@ def ascolto_risposta() -> str:
     print("[MIC] ✗ Riconoscimento fallito totalmente.")
     return "non ho capito"
 
-
+# funzione che asolta la ripsota e innesca la funzione gestisci emozioni
 def ascolto_risposta_empatico(reachy: ReachyMini) -> tuple[str, bool]:
     """
     Esegue l'ascolto e analizza l'emozione della risposta.
@@ -95,13 +95,15 @@ def ascolto_risposta_empatico(reachy: ReachyMini) -> tuple[str, bool]:
     """
     risposta = ascolto_risposta()
     
-    # Processa le emozioni solo se c'è una risposta valida
+    # processa le emozioni solo se c'è una risposta valida
     if risposta and risposta != "non ho capito":
         print(f"[EMOZIONI] Analisi per: '{risposta}'")
-        emozione = rileva_emozione(risposta)
+        emozione = rileva_emozione(risposta) #rileva emozione trasmessa
+        #se rileva un'emozione
         if emozione:
-            continua = gestisci_emozione(emozione, reachy)
+            continua = gestisci_emozione(emozione, reachy) #deviaizone dell'interazione da flusso principale
+            #condizione che permette di scartare la risposta emotiva dell'utente per rifare la domanda (es. se dice sto male alla domana come ti chiami il sistema registrerebbe "male" come nome dell'utente)
             if not continua:
-                return "RIPETI", False  # STOP: l'utente vuole l'assistente
-            
-    return risposta, True  # CONTINUA: nessun problema emotivo o emozione gestita
+                return "RIPETI", False  
+    #nel caso non rilevi emozioni negative -> flusso di interazione continua        
+    return risposta, True  
