@@ -22,6 +22,7 @@ DIALETTI = {
     "Sardegna":              "Cumente ses, caru?",
 }
 
+#funzione che prende in input ripsosta dell'utente (anche se dice una città) e restituisce la frase in dialetto corrispondente alla regione
 def ottieni_regione(input_utente):
     testo=input_utente.lower()
     
